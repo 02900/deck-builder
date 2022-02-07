@@ -1,4 +1,9 @@
+export interface IQueryConfig {
+  num: number,
+  offset: number
+}
+
 export interface IQueryParams {
-  name: string,
+  name?: string,
   atk?: string
 }
