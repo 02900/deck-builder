@@ -1,0 +1,22 @@
+<app-item-pair-value [key]="icon" [value]="name"></app-item-pair-value>
+
+<div class="stats">
+  <span class="total">{{ total }}</span>
+
+  <ng-container *ngIf="showCounters">
+    <app-item-pair-value
+      [key]="label.monster"
+      [value]="total"
+    ></app-item-pair-value>
+
+    <app-item-pair-value
+      [key]="label.magic"
+      [value]="total"
+    ></app-item-pair-value>
+
+    <app-item-pair-value
+      [key]="label.trap"
+      [value]="total"
+    ></app-item-pair-value>
+  </ng-container>
+</div>
