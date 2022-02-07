@@ -1,0 +1,14 @@
+<app-deck-header
+  [icon]="'X'"
+  [name]="'Main Deck'"
+  [total]="42"
+  [showCounters]="true"
+></app-deck-header>
+<app-card-list [cards]="mainDeck ?? []"></app-card-list>
+
+<app-deck-header
+  [icon]="'Y'"
+  [name]="'Extra Deck'"
+  [total]="42"
+></app-deck-header>
+<app-card-list [cards]="extraDeck ?? []"></app-card-list>
