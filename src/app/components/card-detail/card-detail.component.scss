@@ -1,4 +1,4 @@
-section {
+:host {
   padding: 1rem;
 
   .header {
@@ -24,15 +24,6 @@ section {
       flex-grow: 1;
       padding-top: 1rem;
       padding-left: 1rem;
-
-      .item {
-        display: flex;
-        justify-content: space-between;
-
-        p:first-child {
-          margin-right: 1rem;
-        }
-      }
     }
   }
 

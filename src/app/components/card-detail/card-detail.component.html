@@ -1,40 +1,46 @@
-<section>
-  <div class="header">
-    <p>{{ card.name | uppercase }}</p>
+<div class="header">
+  <p>{{ card.name | uppercase }}</p>
+</div>
+
+<div class="summary">
+  <app-card [card]="card"></app-card>
+
+  <div class="bullets">
+    <app-item-pair-value
+      [key]="'Type'"
+      [value]="card.type | uppercase"
+      justify-content="space-between"
+    ></app-item-pair-value>
+
+    <app-item-pair-value
+      [key]="'Race'"
+      [value]="card.race | uppercase"
+      justify-content="space-between"
+    ></app-item-pair-value>
+
+    <app-item-pair-value
+      *ngIf="card?.level"
+      [key]="'Level'"
+      [value]="card.level"
+      justify-content="space-between"
+    ></app-item-pair-value>
+
+    <app-item-pair-value
+      *ngIf="card?.atk"
+      [key]="'ATK'"
+      [value]="card.atk"
+      justify-content="space-between"
+    ></app-item-pair-value>
+
+    <app-item-pair-value
+      *ngIf="card?.def"
+      [key]="'DEF'"
+      [value]="card.def"
+      justify-content="space-between"
+    ></app-item-pair-value>
   </div>
+</div>
 
-  <div class="summary">
-    <app-card [card]="card"></app-card>
-
-    <div class="bullets">
-      <div class="item">
-        <p>Type</p>
-        <p>{{ card.type | uppercase }}</p>
-      </div>
-
-      <div class="item">
-        <p>Race</p>
-        <p>{{ card.race | uppercase }}</p>
-      </div>
-
-      <div class="item">
-        <p>Level</p>
-        <p>{{ card.level }}</p>
-      </div>
-
-      <div class="item">
-        <p>ATK</p>
-        <p>{{ card.atk }}</p>
-      </div>
-
-      <div class="item">
-        <p>DEF</p>
-        <p>{{ card.def }}</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="description">
-    <p>{{ card.desc }}</p>
-  </div>
-</section>
+<div class="description">
+  <p>{{ card.desc }}</p>
+</div>
