@@ -1,4 +1,6 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { TCard } from './card.interface';
+import { darkMagician } from './card.mock';
 
 @Component({
   selector: 'app-card',
@@ -6,4 +8,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CardComponent { }
+export class CardComponent {
+  @Input() card: TCard = darkMagician;
+}
