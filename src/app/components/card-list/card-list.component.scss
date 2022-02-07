@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+
+  app-card {
+    max-width: 3rem;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
