@@ -1,6 +1,6 @@
-import { TCard } from './card.interface';
+import { ICard } from './card.interface';
 
-export const darkMagician: TCard = {
+export const darkMagician: ICard = {
   id: 46986421,
   name: 'Dark Magician',
   type: 'Normal Monster',
@@ -78,7 +78,7 @@ export const darkMagician: TCard = {
   ],
 };
 
-export const mirrorForce: TCard = {
+export const mirrorForce: ICard = {
   id: 44095762,
   name: 'Mirror Force',
   type: 'Trap Card',
@@ -98,7 +98,7 @@ export const mirrorForce: TCard = {
   ],
 };
 
-export const darkHole: TCard = {
+export const darkHole: ICard = {
   id: 53129443,
   name: 'Dark Hole',
   type: 'Spell Card',

@@ -8,7 +8,7 @@ interface ICardImage {
   image_url_small: string;
 }
 
-interface ICardBase {
+export interface ICard {
   id: number;
   name: string;
   type: string;
@@ -17,15 +17,10 @@ interface ICardBase {
   card_images: ICardImage[];
   archetype?: string;
   banlist_info?: BanlistInfo;
-}
-
-interface ICardMonster extends ICardBase {
-  atk: number;
-  def: number;
-  level: number;
-  attribute: string;
+  atk?: number;
+  def?: number;
+  level?: number;
+  attribute?: string;
   linkval?: number;
   linkmarkers?: string[];
 }
-
-export type TCard = ICardBase | ICardMonster;

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '@environments/environment';
-import { IQueryParams, IQueryConfig } from './query-params.interface';
+import { ICard } from '@components/card/card.interface';
+import { IQueryParams, IQueryConfig, IQueryResult } from './query.interface';
+import { map, Observable } from 'rxjs';
 
 const LIMIT_RESULTS = 30;
 const OFFSET_RESULTS = 0;
@@ -14,16 +16,17 @@ export class YgoApiService {
 
   constructor(private readonly http: HttpClient) { }
 
-  query(query: IQueryParams, queryConfig?: IQueryConfig) {
+  query(query: IQueryParams, queryConfig?: IQueryConfig): Observable<ICard[]> {
     const params = this.getParams(query, queryConfig);
-    return this.http.get(this.API_URL, { params });
+    return this.http
+      .get<IQueryResult>(this.API_URL, { params })
+      .pipe(map((results: IQueryResult) => results.data));
   }
 
   private getParams(
     query: IQueryParams,
     queryConfig: IQueryConfig = { num: LIMIT_RESULTS, offset: OFFSET_RESULTS }
   ): HttpParams {
-
     const params: {
       [param: string]:
       | string
