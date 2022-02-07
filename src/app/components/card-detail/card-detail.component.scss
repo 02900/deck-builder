@@ -1,0 +1,45 @@
+section {
+  padding: 1rem;
+
+  .header {
+    padding: 0.25rem 1rem;
+    width: 100%;
+    border: 2px white solid;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+
+  .summary {
+    display: flex;
+    justify-content: space-between;
+
+    app-card {
+      max-width: 10rem;
+      margin-bottom: 1rem;
+    }
+
+    .bullets {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      padding-top: 1rem;
+      padding-left: 1rem;
+
+      .item {
+        display: flex;
+        justify-content: space-between;
+
+        p:first-child {
+          margin-right: 1rem;
+        }
+      }
+    }
+  }
+
+  .description {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: rgba(245, 245, 245, 0.062);
+  }
+}
