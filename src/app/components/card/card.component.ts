@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { ICard } from './card.interface';
-import { darkMagician } from './card.mock';
 
 @Component({
   selector: 'app-card',
@@ -9,5 +8,5 @@ import { darkMagician } from './card.mock';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardComponent {
-  @Input() card: ICard = darkMagician;
+  @Input() card!: ICard;
 }
