@@ -1,10 +1,22 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { categories, types, attributes, races, texts } from './form-search.constant';
-
-type TCategory = 'monster' | 'spell' | 'trap';
+import { IQueryParams } from '@services/ygo-api';
+import { ISearchParams, SearchParams, Category } from './form-search.utils';
+import {
+  categories,
+  types,
+  attributes,
+  races,
+  texts,
+} from './form-search.constant';
 
 @Component({
   selector: 'app-form-search',
@@ -13,6 +25,8 @@ type TCategory = 'monster' | 'spell' | 'trap';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormSearchComponent implements OnInit {
+  @Output() valueChanged = new EventEmitter<IQueryParams>();
+
   readonly categories = categories;
   readonly attributes = attributes;
   readonly races = races;
@@ -20,13 +34,13 @@ export class FormSearchComponent implements OnInit {
 
   readonly formSearch: FormGroup = this.fb.group({
     category: [''],
-    type: [''],
-    race: [''],
+    type: [{ value: '', disabled: true }],
     attribute: [''],
+    race: [''],
     query: [''],
   });
 
-  currentType = types.all;
+  currentType: any[] | undefined;
 
   private readonly unsubscribe$ = new Subject<void>();
 
@@ -39,31 +53,38 @@ export class FormSearchComponent implements OnInit {
 
   private listenFormChanges() {
     this.formSearch.valueChanges
-      .pipe(debounceTime(500), takeUntil(this.unsubscribe$));
+      .pipe(debounceTime(500), takeUntil(this.unsubscribe$))
+      .subscribe((value: ISearchParams) => {
+        const searchParams = new SearchParams(value);
+        this.valueChanged.emit(searchParams.toQueryParams())
+      }
+      );
   }
 
   private listenCategorySelect(): void {
     this.formSearch
       .get('category')
       ?.valueChanges.pipe(takeUntil(this.unsubscribe$))
-      .subscribe((newCategory: TCategory) => {
+      .subscribe((newCategory: Category) => {
         this.setDefaultCategory();
         this.applyCategoryFilter(newCategory);
       });
   }
 
   private setDefaultCategory(): void {
-    this.currentType = types.all;
+    this.currentType = undefined;
+    this.formSearch.patchValue({ type: '' });
+    this.formSearch.get('type')?.disable();
     this.formSearch.get('race')?.enable();
     this.formSearch.get('attribute')?.enable();
   }
 
-  private applyCategoryFilter(newCategory: TCategory): void {
+  private applyCategoryFilter(newCategory: Category): void {
     if (types[newCategory]) {
       this.currentType = types[newCategory];
-      this.formSearch.patchValue({ type: '' });
+      this.formSearch.get('type')?.enable();
 
-      if (newCategory !== 'monster') {
+      if (newCategory !== Category.Monster) {
         this.formSearch.get('race')?.disable();
         this.formSearch.get('attribute')?.disable();
       }

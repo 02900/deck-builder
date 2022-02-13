@@ -36,7 +36,9 @@ export class YgoApiService {
     } = {};
 
     for (const [key, value] of Object.entries(queryConfig)) params[key] = value;
-    for (const [key, value] of Object.entries(query)) params[key] = value;
+
+    for (const [key, value] of Object.entries(query))
+      if (value) params[key] = value;
 
     return new HttpParams({ fromObject: params });
   }

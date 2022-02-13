@@ -4,8 +4,12 @@ export interface IQueryConfig {
 }
 
 export interface IQueryParams {
-  name?: string;
+  fname?: string;
+  desc?: string;
   atk?: string;
+  type?: string;
+  attribute?: string;
+  race?: string;
 }
 
 interface IBanListInfo {
