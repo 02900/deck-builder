@@ -1,0 +1,15 @@
+main {
+  display: flex;
+
+  app-card-detail {
+    width: 26rem;
+  }
+
+  app-deck-viewer {
+    width: 30rem;
+  }
+
+  app-card-catalog {
+    width: 24rem;
+  }
+}
