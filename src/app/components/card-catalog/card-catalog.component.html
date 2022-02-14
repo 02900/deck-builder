@@ -1,0 +1,2 @@
+<app-form-search (valueChanged)="updateCatalog($event)"></app-form-search>
+<app-card-list [cards]="(cards$ | async) ?? []"></app-card-list>
