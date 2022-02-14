@@ -1,8 +1,22 @@
-<div class="card">
+<button
+  class="card"
+  *ngIf="selectableCard; else nonSelectableCardTemplate"
+  (click)="updateCardSelected()"
+>
+  <ng-template *ngTemplateOutlet="cardImgTemplate"></ng-template>
+</button>
+
+<ng-template #nonSelectableCardTemplate>
+  <div class="card">
+    <ng-template *ngTemplateOutlet="cardImgTemplate"></ng-template>
+  </div>
+</ng-template>
+
+<ng-template #cardImgTemplate>
   <img
     width="421"
     height="614"
     [alt]="card.name"
-    [src]="card.card_images[0].image_url"
+    [src]="card.card_images[0].image_url_small"
   />
-</div>
+</ng-template>
