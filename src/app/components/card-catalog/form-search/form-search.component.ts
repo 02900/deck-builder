@@ -40,7 +40,7 @@ export class FormSearchComponent implements OnInit {
     query: [''],
   });
 
-  currentType: any[] | undefined;
+  currentType?: any[];
 
   private readonly unsubscribe$ = new Subject<void>();
 
