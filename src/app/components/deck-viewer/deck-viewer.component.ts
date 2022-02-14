@@ -9,6 +9,6 @@ import { darkHole, darkMagician, mirrorForce } from '@components/card/card.mock'
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeckViewerComponent {
-  @Input() mainDeck!: ICard[] | null;
-  @Input() extraDeck!: ICard[] | null;
+  mainDeck: ICard[] = [];
+  extraDeck: ICard[] = [];
 }

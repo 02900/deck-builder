@@ -1,7 +1,11 @@
 :host {
   padding: 1rem;
 
-  app-card-list {
-    margin-bottom: 1.5rem;
+  .deck {
+    min-height: 20rem;
+
+    app-card-list {
+      margin-bottom: 1.5rem;
+    }
   }
 }

@@ -1,4 +1,4 @@
-<ng-container *ngIf="mainDeck">
+<div class="deck" *ngIf="mainDeck">
   <app-deck-header
     [icon]="'X'"
     [name]="'Main Deck'"
@@ -6,9 +6,9 @@
     [showCounters]="true"
   ></app-deck-header>
   <app-card-list [cards]="mainDeck"></app-card-list>
-</ng-container>
+</div>
 
-<ng-container *ngIf="extraDeck">
+<div class="deck" *ngIf="extraDeck">
   <app-deck-header
     [icon]="'Y'"
     [name]="'Extra Deck'"
@@ -16,4 +16,4 @@
   ></app-deck-header>
 
   <app-card-list [cards]="extraDeck"></app-card-list>
-</ng-container>
+</div>
