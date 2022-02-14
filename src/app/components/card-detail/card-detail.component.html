@@ -1,46 +1,58 @@
-<div class="header">
-  <p>{{ card.name | uppercase }}</p>
-</div>
+<ng-template
+  *ngTemplateOutlet="
+    cardDetailTemplate;
+    context: { cardDetail: cardSelected.current | async }
+  "
+>
+</ng-template>
 
-<div class="summary">
-  <app-card [card]="card"></app-card>
+<ng-template #cardDetailTemplate let-cardDetail="cardDetail">
+  <ng-container *ngIf="cardDetail">
+    <div class="header">
+      <p>{{ cardDetail.name | uppercase }}</p>
+    </div>
 
-  <div class="bullets">
-    <app-item-pair-value
-      [key]="'Type'"
-      [value]="card.type | uppercase"
-      justify-content="space-between"
-    ></app-item-pair-value>
+    <div class="summary">
+      <app-card [card]="cardDetail"></app-card>
 
-    <app-item-pair-value
-      [key]="'Race'"
-      [value]="card.race | uppercase"
-      justify-content="space-between"
-    ></app-item-pair-value>
+      <div class="bullets">
+        <app-item-pair-value
+          [key]="'Type'"
+          [value]="cardDetail.type | uppercase"
+          justify-content="space-between"
+        ></app-item-pair-value>
 
-    <app-item-pair-value
-      *ngIf="card?.level"
-      [key]="'Level'"
-      [value]="card.level"
-      justify-content="space-between"
-    ></app-item-pair-value>
+        <app-item-pair-value
+          [key]="'Race'"
+          [value]="cardDetail.race | uppercase"
+          justify-content="space-between"
+        ></app-item-pair-value>
 
-    <app-item-pair-value
-      *ngIf="card?.atk"
-      [key]="'ATK'"
-      [value]="card.atk"
-      justify-content="space-between"
-    ></app-item-pair-value>
+        <app-item-pair-value
+          *ngIf="cardDetail?.level"
+          [key]="'Level'"
+          [value]="cardDetail.level"
+          justify-content="space-between"
+        ></app-item-pair-value>
 
-    <app-item-pair-value
-      *ngIf="card?.def"
-      [key]="'DEF'"
-      [value]="card.def"
-      justify-content="space-between"
-    ></app-item-pair-value>
-  </div>
-</div>
+        <app-item-pair-value
+          *ngIf="cardDetail?.atk"
+          [key]="'ATK'"
+          [value]="cardDetail.atk"
+          justify-content="space-between"
+        ></app-item-pair-value>
 
-<div class="description">
-  <p>{{ card.desc }}</p>
-</div>
+        <app-item-pair-value
+          *ngIf="cardDetail?.def"
+          [key]="'DEF'"
+          [value]="cardDetail.def"
+          justify-content="space-between"
+        ></app-item-pair-value>
+      </div>
+    </div>
+
+    <div class="description">
+      <p>{{ cardDetail.desc }}</p>
+    </div>
+  </ng-container>
+</ng-template>
