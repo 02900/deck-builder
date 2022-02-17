@@ -1,5 +1,5 @@
-<app-card
-  *ngFor="let card of cards"
-  [card]="card"
-  [selectableCard]="true"
-></app-card>
+<ul>
+  <li cdkDrag *ngFor="let card of cards">
+    <app-card [card]="card" [selectableCard]="true"></app-card>
+  </li>
+</ul>

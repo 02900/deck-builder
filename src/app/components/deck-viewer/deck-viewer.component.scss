@@ -2,6 +2,8 @@
   padding: 1rem;
 
   .deck {
+    display: flex;
+    flex-direction: column;
     min-height: 20rem;
 
     app-card-list {

@@ -10,9 +10,26 @@ body {
   margin: 0;
   color: white;
   background-color: black;
+  --background: #f5f5f510;
 }
 
 h1,
 p {
   margin: 0;
+}
+
+ul {
+  margin: 0;
+  list-style: outside none none;
+  padding-inline-start: 0;
+}
+
+li {
+  display: flex;
+  padding: 0.25rem;
+  border-radius: 8px;
+
+  &:hover {
+    background-color: rgba(248, 248, 248, 0.425);
+  }
 }

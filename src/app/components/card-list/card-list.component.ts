@@ -5,7 +5,7 @@ import { ICard } from '@components/card/card.interface';
   selector: 'app-card-list',
   templateUrl: './card-list.component.html',
   styleUrls: ['./card-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardListComponent {
   @Input() cards!: ICard[];

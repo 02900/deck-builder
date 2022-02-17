@@ -1,2 +1,8 @@
 <app-form-search (valueChanged)="updateCatalog($event)"></app-form-search>
-<app-card-list [cards]="(cards$ | async) ?? []"></app-card-list>
+<app-card-list
+  cdkDropList
+  *ngIf="cards$ | async as cards"
+  [cards]="cards"
+  [cdkDropListData]="cards"
+  (cdkDropListDropped)="drop($event)"
+></app-card-list>

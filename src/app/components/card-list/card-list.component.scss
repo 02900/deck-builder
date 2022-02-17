@@ -1,14 +1,23 @@
 :host {
   display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: var(--background);
+}
+
+ul {
+  display: flex;
   flex-wrap: wrap;
+  padding: 0.5rem;
+}
 
-  app-card {
-    max-width: 3rem;
-    margin-right: 1rem;
-    margin-bottom: 0.5rem;
+li {
+  width: 100%;
+  max-width: 3rem;
+  margin-right: 0.25rem;
+  margin-bottom: 0.5rem;
 
-    &:last-child {
-      margin-right: 0;
-    }
+  &:last-child {
+    margin-right: 0;
   }
 }
