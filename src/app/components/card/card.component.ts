@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { CardSelectedService } from '@services/card-selected/card-selected.service';
-import { ICard } from './card.interface';
+import { Card } from '@classes/card/';
 
 @Component({
   selector: 'app-card',
@@ -9,7 +9,7 @@ import { ICard } from './card.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardComponent {
-  @Input() card!: ICard;
+  @Input() card!: Card;
   @Input() selectableCard!: boolean;
 
   constructor(private readonly cardSelected: CardSelectedService) { }

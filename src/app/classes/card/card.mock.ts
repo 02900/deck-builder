@@ -1,3 +1,4 @@
+import { Card } from '.';
 import { ICard } from './card.interface';
 
 export const darkMagician: ICard = {
@@ -84,9 +85,6 @@ export const mirrorForce: ICard = {
   type: 'Trap Card',
   desc: "When an opponent's monster declares an attack: Destroy all your opponent's Attack Position monsters.",
   race: 'Normal',
-  banlist_info: {
-    ban_goat: 'Limited',
-  },
   card_images: [
     {
       id: 44095762,
@@ -96,6 +94,9 @@ export const mirrorForce: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/44095762.jpg',
     },
   ],
+  banlist_info: {
+    ban_goat: 'Limited',
+  },
 };
 
 export const darkHole: ICard = {
@@ -105,9 +106,6 @@ export const darkHole: ICard = {
   desc: 'Destroy all monsters on the field.',
   race: 'Normal',
   archetype: 'Hole',
-  banlist_info: {
-    ban_goat: 'Banned',
-  },
   card_images: [
     {
       id: 53129443,
@@ -117,4 +115,7 @@ export const darkHole: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/53129443.jpg',
     },
   ],
+  banlist_info: {
+    ban_goat: 'Banned',
+  },
 };

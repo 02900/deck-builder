@@ -22,6 +22,7 @@
     "paths": {
       "@environments/*": ["src/environments/*"],
       "@components/*": ["src/app/components/*"],
+      "@classes/*": ["src/app/classes/*"],
       "@services/*": ["src/app/services/*"]
     }
   },

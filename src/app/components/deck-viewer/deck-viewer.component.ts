@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CdkDragDrop, copyArrayItem } from '@angular/cdk/drag-drop';
-import { ICard } from '@components/card/card.interface';
+import { Card } from '@classes/card';
 
 @Component({
   selector: 'app-deck-viewer',
@@ -9,10 +9,10 @@ import { ICard } from '@components/card/card.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeckViewerComponent {
-  mainDeck: ICard[] = [];
-  extraDeck: ICard[] = [];
+  mainDeck: Card[] = [];
+  extraDeck: Card[] = [];
 
-  drop(event: CdkDragDrop<ICard[]>) {
+  drop(event: CdkDragDrop<Card[]>) {
     copyArrayItem(
       event.previousContainer.data,
       event.container.data,

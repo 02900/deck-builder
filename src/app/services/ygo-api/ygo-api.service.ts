@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '@environments/environment';
-import { ICard } from '@components/card/card.interface';
+import { Card, ICard } from '@classes/card';
 import { IQueryParams, IQueryConfig, IQueryResult } from './query.interface';
 
 const LIMIT_RESULTS = 30;
@@ -16,11 +16,14 @@ export class YgoApiService {
 
   constructor(private readonly http: HttpClient) { }
 
-  query(query: IQueryParams, queryConfig?: IQueryConfig): Observable<ICard[]> {
+  query(query: IQueryParams, queryConfig?: IQueryConfig): Observable<Card[]> {
     const params = this.getParams(query, queryConfig);
-    return this.http
-      .get<IQueryResult>(this.API_URL, { params })
-      .pipe(map((results: IQueryResult) => results.data));
+    return this.http.get<IQueryResult>(this.API_URL, { params }).pipe(
+      map((results: IQueryResult) => {
+        const cards = results.data.map((card) => new Card(card));
+        return cards;
+      })
+    );
   }
 
   private getParams(
