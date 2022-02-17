@@ -1,4 +1,13 @@
-import { ICard, ICardImage, BanlistInfo } from "./card.interface";
+import { ICard, ICardImage, BanlistInfo } from './card.interface';
+
+enum Category {
+  MONSTER,
+  SPELL,
+  TRAP,
+}
+
+const trapCardId = 'Trap Card';
+const spellCardId = 'Spell Card';
 
 export class Card {
   id: number;
@@ -15,6 +24,24 @@ export class Card {
   attribute?: string;
   linkval?: number;
   linkmarkers?: string[];
+
+  get isMonster() {
+    return this.category === Category.MONSTER;
+  }
+
+  get isSpell() {
+    return this.category === Category.SPELL;
+  }
+
+  get isTrap() {
+    return this.category === Category.TRAP;
+  }
+
+  private get category(): Category {
+    if (this.type === spellCardId) return Category.SPELL;
+    if (this.type === trapCardId) return Category.TRAP;
+    return Category.MONSTER;
+  }
 
   constructor(private readonly card: ICard) {
     this.id = card.id;
