@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
 import { environment } from '@environments/environment';
 import { ICard } from '@components/card/card.interface';
 import { IQueryParams, IQueryConfig, IQueryResult } from './query.interface';
-import { map, Observable } from 'rxjs';
 
 const LIMIT_RESULTS = 30;
 const OFFSET_RESULTS = 0;

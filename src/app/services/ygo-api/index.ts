@@ -1,2 +1,2 @@
-export { YgoApiService } from "./ygo-api.service";
-export { IQueryConfig, IQueryParams } from "./query.interface";
+export { IQueryParams, IQueryConfig, IQueryResult } from './query.interface';
+export { YgoApiService } from './ygo-api.service';

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CardSelectedService } from '@services/card-selected.service';
+import { CardSelectedService } from '@services/card-selected/card-selected.service';
 
 @Component({
   selector: 'app-card-detail',
