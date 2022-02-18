@@ -13,6 +13,7 @@ export class SearchParams {
 
   toQueryParams(): IQueryParams {
     let queryParams: IQueryParams = {
+      fname: this.search.query,
       desc: this.search.query,
       type: this.search.type,
       attribute: this.search.attribute,
