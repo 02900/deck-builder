@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CardSelectedService } from '@services/card-selected/card-selected.service';
+import { label } from './card-detail.constans';
 
 @Component({
   selector: 'app-card-detail',
@@ -8,5 +9,7 @@ import { CardSelectedService } from '@services/card-selected/card-selected.servi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardDetailComponent {
+  readonly label = label;
+
   constructor(readonly cardSelected: CardSelectedService) { }
 }

@@ -1,48 +1,37 @@
-<ng-container *ngIf="cardSelected.current | async as cardDetail">
+<ng-container *ngIf="cardSelected.current | async as card">
   <div class="header">
-    <p>{{ cardDetail.name | uppercase }}</p>
+    <p>{{ card.name | uppercase }}</p>
   </div>
 
   <div class="summary">
-    <app-card [card]="cardDetail"></app-card>
+    <app-card [card]="card"></app-card>
 
     <div class="bullets">
-      <app-item-pair-value
-        [key]="'Type'"
-        [value]="cardDetail.type | uppercase"
-        justify-content="space-between"
-      ></app-item-pair-value>
-
-      <app-item-pair-value
-        [key]="'Race'"
-        [value]="cardDetail.race | uppercase"
-        justify-content="space-between"
-      ></app-item-pair-value>
-
-      <app-item-pair-value
-        *ngIf="cardDetail?.level"
-        [key]="'Level'"
-        [value]="cardDetail.level"
-        justify-content="space-between"
-      ></app-item-pair-value>
-
-      <app-item-pair-value
-        *ngIf="cardDetail?.atk"
-        [key]="'ATK'"
-        [value]="cardDetail.atk"
-        justify-content="space-between"
-      ></app-item-pair-value>
-
-      <app-item-pair-value
-        *ngIf="cardDetail?.def"
-        [key]="'DEF'"
-        [value]="cardDetail.def"
-        justify-content="space-between"
-      ></app-item-pair-value>
+      <ng-container
+        *ngIf="[
+          { label: label.type, value: card.type | uppercase },
+          { label: label.race, value: card.race | uppercase },
+          { label: label.attribute, value: card.attribute | uppercase },
+          { label: label.level, value: card.level },
+          { label: label.atk, value: card.atk },
+          { label: label.def, value: card.def },
+          { label: label.linkval, value: card.linkval },
+          { label: label.ban, value: card.banlist_info?.ban_goat }
+        ] as cardProperties"
+      >
+        <ng-container *ngFor="let property of cardProperties">
+          <app-item-pair-value
+            *ngIf="property.value"
+            [key]="property.label"
+            [value]="property.value"
+            justify-content="space-between"
+          ></app-item-pair-value>
+        </ng-container>
+      </ng-container>
     </div>
   </div>
 
   <div class="description">
-    <p>{{ cardDetail.desc }}</p>
+    <p>{{ card.desc }}</p>
   </div>
 </ng-container>
