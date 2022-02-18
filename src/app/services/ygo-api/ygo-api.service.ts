@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { Card } from '@classes/card';
 import { IQueryParams, IQueryConfig, IQueryResult } from './query.interface';
@@ -33,13 +33,13 @@ export class YgoApiService {
     queryConfig: IQueryConfig | undefined
   ): Observable<Card[]> {
     const queryByName = { ...query };
-    delete queryByName.desc;
+    delete queryByName.fname;
     const paramsWithName = this.transformToHttpParams(queryByName, queryConfig);
     const resultByName$ = this.makeRequest(paramsWithName);
 
-    const queryBtDesc = { ...query };
-    delete queryBtDesc.fname;
-    const paramsWithDesc = this.transformToHttpParams(queryBtDesc, queryConfig);
+    const queryByDesc = { ...query };
+    delete queryByDesc.desc;
+    const paramsWithDesc = this.transformToHttpParams(queryByDesc, queryConfig);
     const resultByDesc$ = this.makeRequest(paramsWithDesc);
 
     return forkJoin([resultByName$, resultByDesc$]).pipe(
@@ -48,10 +48,14 @@ export class YgoApiService {
   }
 
   private makeRequest(params: HttpParams): Observable<Card[]> {
-    return this.http.get<IQueryResult>(this.API_URL, { params }).pipe(
-      map((results: IQueryResult) => {
-        const cards = results.data.map((card) => new Card(card));
-        return cards;
+    return this.http.get<IQueryResult | undefined>(this.API_URL, { params }).pipe(
+      catchError(() => of(undefined)),
+      map((results?: IQueryResult) => {
+        if (results) {
+          const cards = results.data.map((card) => new Card(card));
+          return cards;
+        }
+        return [];
       })
     );
   }

@@ -18,6 +18,8 @@ import {
   texts,
 } from './form-search.constant';
 
+const delayTime = 500;
+
 @Component({
   selector: 'app-form-search',
   templateUrl: './form-search.component.html',
@@ -38,6 +40,10 @@ export class FormSearchComponent implements OnInit {
     attribute: [''],
     race: [''],
     query: [''],
+    atk: [''],
+    def: [''],
+    level: [''],
+    link: [''],
   });
 
   currentType?: any[];
@@ -53,7 +59,7 @@ export class FormSearchComponent implements OnInit {
 
   private listenFormChanges() {
     this.formSearch.valueChanges
-      .pipe(debounceTime(500), takeUntil(this.unsubscribe$))
+      .pipe(debounceTime(delayTime), takeUntil(this.unsubscribe$))
       .subscribe((value: ISearchParams) => {
         const searchParams = new SearchParams(value);
         this.valueChanged.emit(searchParams.toQueryParams())

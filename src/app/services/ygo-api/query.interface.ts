@@ -6,10 +6,13 @@ export interface IQueryConfig {
 export interface IQueryParams {
   fname?: string;
   desc?: string;
-  atk?: string;
   type?: string;
   attribute?: string;
   race?: string;
+  atk?: string;
+  def?: string;
+  level?: string;
+  link?: string;
 }
 
 interface IBanListInfo {

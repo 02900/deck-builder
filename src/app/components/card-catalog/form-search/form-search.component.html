@@ -1,31 +1,58 @@
 <form [formGroup]="formSearch">
-  <select formControlName="category">
-    <option selected value>{{ texts.category }}</option>
-    <option *ngFor="let category of categories" [value]="category.value">
-      {{ category.text }}
-    </option>
-  </select>
+  <div class="form-element">
+    <select formControlName="category">
+      <option selected value>{{ texts.category }}</option>
+      <option *ngFor="let category of categories" [value]="category.value">
+        {{ category.text }}
+      </option>
+    </select>
 
-  <select formControlName="type">
-    <option selected value>{{ texts.type }}</option>
-    <option *ngFor="let type of currentType" [value]="type.value">
-      {{ type.text }}
-    </option>
-  </select>
+    <select formControlName="type">
+      <option selected value>{{ texts.type }}</option>
+      <option *ngFor="let type of currentType" [value]="type.value">
+        {{ type.text }}
+      </option>
+    </select>
+  </div>
 
-  <select formControlName="attribute">
-    <option selected value>{{ texts.attribute }}</option>
-    <option *ngFor="let attribute of attributes" [value]="attribute.value">
-      {{ attribute.text }}
-    </option>
-  </select>
+  <div class="form-element">
+    <select formControlName="attribute">
+      <option selected value>{{ texts.attribute }}</option>
+      <option *ngFor="let attribute of attributes" [value]="attribute.value">
+        {{ attribute.text }}
+      </option>
+    </select>
 
-  <select formControlName="race">
-    <option selected value>{{ texts.race }}</option>
-    <option *ngFor="let race of races" [value]="race.value">
-      {{ race.text }}
-    </option>
-  </select>
+    <select formControlName="race">
+      <option selected value>{{ texts.race }}</option>
+      <option *ngFor="let race of races" [value]="race.value">
+        {{ race.text }}
+      </option>
+    </select>
+  </div>
 
-  <input type="text" formControlName="query" />
+  <div class="form-element">
+    <label for="query">{{ texts.query }}</label>
+    <input id="query" type="text" formControlName="query" />
+  </div>
+
+  <div class="form-element">
+    <label for="atk">{{ texts.atk }}</label>
+    <input id="atk" type="number" formControlName="atk" />
+  </div>
+
+  <div class="form-element">
+    <label for="def">{{ texts.def }}</label>
+    <input id="def" type="number" formControlName="def" />
+  </div>
+
+  <div class="form-element">
+    <label for="level">{{ texts.level }}</label>
+    <input id="level" type="number" formControlName="level" />
+  </div>
+
+  <div class="form-element">
+    <label for="link">{{ texts.link }}</label>
+    <input id="link" type="number" formControlName="link" />
+  </div>
 </form>

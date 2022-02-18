@@ -3,6 +3,11 @@ export const texts = {
   type: 'Type',
   attribute: 'Attribute',
   race: 'Race',
+  query: 'Query',
+  atk: 'ATK',
+  def: 'DEF',
+  level: 'Level',
+  link: 'Link',
 };
 
 export const categories = [
@@ -15,21 +20,17 @@ const typeMonster = [
   { text: 'Normal Monster', value: 'normal monster' },
   { text: 'Effect Monster', value: 'effect monster' },
   { text: 'Fusion Monster', value: 'fusion monster' },
-  { text: 'Fusion Effect Monster', value: 'fusion effect monster' },
   { text: 'Ritual Monster', value: 'ritual monster' },
   { text: 'Ritual Effect Monster', value: 'ritual effect monster' },
   { text: 'Spirit Monster', value: 'spirit monster' },
   { text: 'Union Effect Monster', value: 'union effect monster' },
   { text: 'Gemini Monster', value: 'gemini monster' },
   { text: 'Tuner Monster', value: 'tuner monster' },
-  { text: 'Tuner Effect Monster', value: 'flip tuner effect monster' },
   { text: 'Synchro Monster', value: 'synchro monster' },
-  { text: 'Synchro Effect Monster', value: 'synchro effect monster' },
   { text: 'Synchro Tuner Monster', value: 'synchro tuner monster' },
   { text: 'Flip Effect Monster', value: 'flip effect monster' },
   { text: 'Toon Monster', value: 'toon monster' },
   { text: 'XYZ Monster', value: 'xyz monster' },
-  { text: 'XYZ Effect Monster', value: 'xyz effect monster' },
 ];
 
 const typeSpell = [

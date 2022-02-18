@@ -6,28 +6,32 @@ export interface ISearchParams {
   race?: string;
   attribute?: string;
   query?: string;
+  atk?: string;
+  def?: string;
+  level?: string;
+  link?: string;
 }
 
 export class SearchParams {
   constructor(readonly search: ISearchParams) { }
 
   toQueryParams(): IQueryParams {
-    let queryParams: IQueryParams = {
+    const isNotMonster =
+      this.search.category && this.search.category !== Category.Monster;
+
+    return {
       fname: this.search.query,
       desc: this.search.query,
-      type: this.search.type,
-      attribute: this.search.attribute,
-      race: this.search.race,
-    };
-
-    if (this.search.category && this.search.category !== Category.Monster) {
-      queryParams.type = this.search.category
+      type: isNotMonster
         ? `${this.search.category} card`
-        : undefined;
-      queryParams.race = this.search.type;
-    }
-
-    return queryParams;
+        : this.search.type,
+      attribute: this.search.attribute,
+      race: isNotMonster ? this.search.type : this.search.race,
+      atk: this.search.atk,
+      def: this.search.def,
+      level: this.search.level,
+      link: this.search.link
+    };
   }
 }
 
