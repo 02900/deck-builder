@@ -1,9 +1,7 @@
-<div class="deck" *ngIf="mainDeck">
+<div *ngIf="mainDeck" class="deck">
   <app-deck-header
-    [icon]="'X'"
-    [name]="'Main Deck'"
-    [total]="42"
-    [showCounters]="true"
+    [name]="text.mainDeck"
+    [total]="mainDeck.length"
   ></app-deck-header>
 
   <app-card-list
@@ -14,12 +12,16 @@
   ></app-card-list>
 </div>
 
-<div class="deck" *ngIf="extraDeck">
+<div *ngIf="extraDeck" class="deck">
   <app-deck-header
-    [icon]="'Y'"
-    [name]="'Extra Deck'"
-    [total]="42"
+    [name]="text.extraDeck"
+    [total]="extraDeck.length"
   ></app-deck-header>
 
-  <app-card-list [cards]="extraDeck"></app-card-list>
+  <app-card-list
+    cdkDropList
+    [cards]="extraDeck"
+    [cdkDropListData]="extraDeck"
+    (cdkDropListDropped)="drop($event)"
+  ></app-card-list>
 </div>

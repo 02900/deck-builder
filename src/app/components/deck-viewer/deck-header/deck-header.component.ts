@@ -11,6 +11,5 @@ export class DeckHeaderComponent {
   @Input() icon!: string;
   @Input() name!: string;
   @Input() total!: number;
-  @Input() showCounters!: boolean;
   readonly label = label;
 }
