@@ -4,6 +4,7 @@ export interface IQueryConfig {
 }
 
 export interface IQueryParams {
+  id?: string;
   fname?: string;
   desc?: string;
   type?: string;

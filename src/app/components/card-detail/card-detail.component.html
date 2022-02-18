@@ -9,6 +9,7 @@
     <div class="bullets">
       <ng-container
         *ngIf="[
+          { label: label.id, value: card.id },
           { label: label.type, value: card.type | uppercase },
           { label: label.race, value: card.race | uppercase },
           { label: label.attribute, value: card.attribute | uppercase },

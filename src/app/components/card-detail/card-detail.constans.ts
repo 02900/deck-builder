@@ -1,4 +1,5 @@
 export const label = {
+  id: 'ID',
   type: 'Type',
   race: 'Race',
   attribute: 'Attribute',

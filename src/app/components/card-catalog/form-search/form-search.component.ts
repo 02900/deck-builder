@@ -35,6 +35,7 @@ export class FormSearchComponent implements OnInit {
   readonly texts = texts;
 
   readonly formSearch: FormGroup = this.fb.group({
+    id: [''],
     category: [''],
     type: [{ value: '', disabled: true }],
     attribute: [''],

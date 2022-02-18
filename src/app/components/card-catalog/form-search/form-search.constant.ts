@@ -1,4 +1,5 @@
 export const texts = {
+  id: 'ID',
   category: 'Category',
   type: 'Type',
   attribute: 'Attribute',

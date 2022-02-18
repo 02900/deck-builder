@@ -1,6 +1,7 @@
 import { IQueryParams } from '@services/ygo-api';
 
 export interface ISearchParams {
+  id?: string;
   category?: Category;
   type?: string;
   race?: string;
@@ -20,6 +21,7 @@ export class SearchParams {
       this.search.category && this.search.category !== Category.Monster;
 
     return {
+      id: this.search.id,
       fname: this.search.query,
       desc: this.search.query,
       type: isNotMonster
