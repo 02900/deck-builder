@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CardSelectedService } from '@services/card-selected/card-selected.service';
+import { darkMagician } from '@classes/card'
 import { label } from './card-detail.constans';
 
 @Component({
@@ -10,6 +11,7 @@ import { label } from './card-detail.constans';
 })
 export class CardDetailComponent {
   readonly label = label;
+  readonly darkMagician = darkMagician;
 
   constructor(readonly cardSelected: CardSelectedService) { }
 }

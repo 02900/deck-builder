@@ -1,4 +1,16 @@
-<ng-container *ngIf="cardSelected.current | async as card">
+<ng-container *ngIf="cardSelected.current | async as card; else defaultCard">
+  <ng-template
+    *ngTemplateOutlet="detail; context: { card: card }"
+  ></ng-template>
+</ng-container>
+
+<ng-template #defaultCard>
+  <ng-template
+    *ngTemplateOutlet="detail; context: { card: darkMagician }"
+  ></ng-template>
+</ng-template>
+
+<ng-template #detail let-card="card">
   <div class="header">
     <p>{{ card.name | uppercase }}</p>
   </div>
@@ -35,4 +47,4 @@
   <div class="description">
     <p>{{ card.desc }}</p>
   </div>
-</ng-container>
+</ng-template>
