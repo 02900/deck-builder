@@ -6,14 +6,23 @@
       [total]="mainDeck().length"
       [icon]="'📦'"
     />
-    <div class="p-3 min-h-[200px]">
-      <app-card-list
-        cdkDropList
-        [cards]="mainDeck()"
-        [cdkDropListData]="mainDeck()"
-        (cdkDropListDropped)="drop($event)"
-      />
-      @if (mainDeck().length === 0) {
+    <div
+      cdkDropList
+      id="main-deck"
+      [cdkDropListData]="mainDeck()"
+      [cdkDropListConnectedTo]="['catalog', 'extra-deck']"
+      (cdkDropListDropped)="drop($event, 'main')"
+      class="p-3 min-h-[200px] relative"
+    >
+      @if (mainDeck().length > 0) {
+        <ul class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+          @for (card of mainDeck(); track card.id) {
+            <li cdkDrag [cdkDragData]="card" class="rounded-lg overflow-hidden">
+              <app-card [card]="card" [selectableCard]="true" />
+            </li>
+          }
+        </ul>
+      } @else {
         <div class="flex flex-col items-center justify-center h-32 text-slate-500">
           <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
@@ -31,14 +40,23 @@
       [total]="extraDeck().length"
       [icon]="'✨'"
     />
-    <div class="p-3 min-h-[150px]">
-      <app-card-list
-        cdkDropList
-        [cards]="extraDeck()"
-        [cdkDropListData]="extraDeck()"
-        (cdkDropListDropped)="drop($event)"
-      />
-      @if (extraDeck().length === 0) {
+    <div
+      cdkDropList
+      id="extra-deck"
+      [cdkDropListData]="extraDeck()"
+      [cdkDropListConnectedTo]="['catalog', 'main-deck']"
+      (cdkDropListDropped)="drop($event, 'extra')"
+      class="p-3 min-h-[150px] relative"
+    >
+      @if (extraDeck().length > 0) {
+        <ul class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+          @for (card of extraDeck(); track card.id) {
+            <li cdkDrag [cdkDragData]="card" class="rounded-lg overflow-hidden">
+              <app-card [card]="card" [selectableCard]="true" />
+            </li>
+          }
+        </ul>
+      } @else {
         <div class="flex flex-col items-center justify-center h-24 text-slate-500">
           <svg class="w-8 h-8 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>

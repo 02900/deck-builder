@@ -1,6 +1,18 @@
-<ul class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+<ul
+  cdkDropList
+  [id]="listId()"
+  [cdkDropListData]="cards()"
+  [cdkDropListConnectedTo]="connectedTo()"
+  (cdkDropListDropped)="onDrop($event)"
+  class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-2 min-h-[50px]"
+>
   @for (card of cards(); track card.id) {
-    <li cdkDrag class="card-hover-effect rounded-lg overflow-hidden cursor-grab active:cursor-grabbing">
+    <li
+      cdkDrag
+      [cdkDragData]="card"
+      [cdkDragStartDelay]="0"
+      class="rounded-lg overflow-hidden"
+    >
       <app-card [card]="card" [selectableCard]="true" />
     </li>
   }

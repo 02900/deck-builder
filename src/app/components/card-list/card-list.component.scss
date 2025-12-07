@@ -1,3 +1,17 @@
 :host {
   display: block;
 }
+
+li {
+  transition: box-shadow 0.15s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px -2px rgba(233, 69, 96, 0.25);
+  }
+}
+
+/* Disable transitions while dragging */
+.cdk-drag-preview li,
+.cdk-drag-preview {
+  transition: none !important;
+}

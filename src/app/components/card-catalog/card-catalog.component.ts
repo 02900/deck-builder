@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Subject, switchMap } from 'rxjs';
 import type { IQueryParams } from '@services/ygo-api';
 import { YgoApiService } from '@services/ygo-api';
+import { DeckService } from '@services/deck/deck.service';
 import { Card } from '@classes/card';
 import { FormSearchComponent } from './form-search/form-search.component';
 import { CardListComponent } from '@components/card-list/card-list.component';
@@ -13,10 +14,11 @@ import { CardListComponent } from '@components/card-list/card-list.component';
   templateUrl: './card-catalog.component.html',
   styleUrls: ['./card-catalog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CdkDropList, FormSearchComponent, CardListComponent],
+  imports: [FormSearchComponent, CardListComponent],
 })
 export class CardCatalogComponent {
   private readonly ygoApi = inject(YgoApiService);
+  private readonly deckService = inject(DeckService);
   private readonly queryParams$ = new Subject<IQueryParams>();
 
   readonly cards = toSignal(
@@ -28,7 +30,10 @@ export class CardCatalogComponent {
     this.queryParams$.next(queryParams);
   }
 
-  drop(event: CdkDragDrop<Card[]>): void {
-    event.previousContainer.data.splice(event.previousIndex, 1);
+  onCardDropped(event: CdkDragDrop<Card[]>): void {
+    // Si la carta viene de un deck (no del catálogo), eliminarla del deck
+    if (event.previousContainer.id !== 'catalog') {
+      this.deckService.removeFromDeck(event.previousContainer.id, event.previousIndex);
+    }
   }
 }

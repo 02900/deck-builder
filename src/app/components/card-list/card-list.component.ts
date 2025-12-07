@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CdkDrag } from '@angular/cdk/drag-drop';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { Card } from '@classes/card/';
 import { CardComponent } from '@components/card/card.component';
 
@@ -8,8 +8,15 @@ import { CardComponent } from '@components/card/card.component';
   templateUrl: './card-list.component.html',
   styleUrls: ['./card-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CdkDrag, CardComponent],
+  imports: [CdkDrag, CdkDropList, CardComponent],
 })
 export class CardListComponent {
   readonly cards = input.required<Card[]>();
+  readonly listId = input.required<string>();
+  readonly connectedTo = input<string[]>([]);
+  readonly dropped = output<CdkDragDrop<Card[]>>();
+
+  onDrop(event: CdkDragDrop<Card[]>): void {
+    this.dropped.emit(event);
+  }
 }

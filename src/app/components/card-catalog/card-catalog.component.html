@@ -16,10 +16,10 @@
   <div class="flex-1 overflow-y-auto p-3">
     @if (cards().length > 0) {
       <app-card-list
-        cdkDropList
         [cards]="cards()"
-        [cdkDropListData]="cards()"
-        (cdkDropListDropped)="drop($event)"
+        [listId]="'catalog'"
+        [connectedTo]="['main-deck', 'extra-deck']"
+        (dropped)="onCardDropped($event)"
       />
     } @else {
       <div class="flex flex-col items-center justify-center h-48 text-slate-500">
