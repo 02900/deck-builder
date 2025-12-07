@@ -24,7 +24,9 @@
       <div class="flex-1 flex items-center justify-center">
         <!-- Canvas Container with Overlay -->
         <div class="relative inline-block">
-          <div #canvasContainer class="[&>canvas]:max-w-full [&>canvas]:max-h-[60vh] [&>canvas]:w-auto [&>canvas]:h-auto [&>canvas]:block [&>canvas]:rounded-2xl">
+          <div #canvasContainer 
+               class="[&>canvas]:max-w-full [&>canvas]:max-h-[60vh] [&>canvas]:w-auto [&>canvas]:h-auto [&>canvas]:block [&>canvas]:rounded-2xl [&>canvas]:cursor-pointer"
+               (click)="onCanvasClick($event)">
             @if (isGenerating()) {
               <div class="text-center p-8">
                 <div class="w-10 h-10 border-4 border-[#e94560] border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
@@ -33,22 +35,27 @@
             }
           </div>
           
-          <!-- Selection Overlay (positioned absolute over canvas) -->
+          <!-- Selection Overlay (positioned absolute over canvas) - DRAGGABLE -->
           @if (overlayStyle(); as style) {
             <div 
-              class="absolute pointer-events-none border-4 border-cyan-400 bg-cyan-400/10 transition-all duration-100 z-50 rounded"
+              class="absolute border-4 border-cyan-400 bg-cyan-400/10 z-50 rounded cursor-move"
               [style.top]="style['top']"
               [style.left]="style['left']"
               [style.width]="style['width']"
               [style.height]="style['height']"
+              (mousedown)="onOverlayMouseDown($event, 'move')"
             >
-              <!-- Corner handles like Figma -->
-              <div class="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm"></div>
-              <div class="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm"></div>
-              <div class="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm"></div>
-              <div class="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm"></div>
+              <!-- Corner handles like Figma - RESIZABLE -->
+              <div class="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm cursor-nwse-resize hover:bg-cyan-400 transition-colors"
+                   (mousedown)="onOverlayMouseDown($event, 'resize-tl')"></div>
+              <div class="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm cursor-nesw-resize hover:bg-cyan-400 transition-colors"
+                   (mousedown)="onOverlayMouseDown($event, 'resize-tr')"></div>
+              <div class="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm cursor-nesw-resize hover:bg-cyan-400 transition-colors"
+                   (mousedown)="onOverlayMouseDown($event, 'resize-bl')"></div>
+              <div class="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm cursor-nwse-resize hover:bg-cyan-400 transition-colors"
+                   (mousedown)="onOverlayMouseDown($event, 'resize-br')"></div>
               <!-- Dimension label -->
-              <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-xs px-2 py-1 rounded font-bold shadow-lg">
+              <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-xs px-2 py-1 rounded font-bold shadow-lg pointer-events-none">
                 {{ selectedElement() }}
               </div>
             </div>
@@ -91,10 +98,9 @@
       <h3 class="text-lg font-bold text-white mb-3">Layout Configuration</h3>
       
       <!-- Artwork Section -->
-      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'artwork'}"
-           (mouseenter)="selectElement('artwork')"
-           (mouseleave)="selectElement(null)">
+           (click)="selectElement('artwork')">
         <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
             [ngClass]="{'text-cyan-400': selectedElement() === 'artwork', 'text-rose-500': selectedElement() !== 'artwork'}">Artwork</h4>
         <div class="space-y-2">
@@ -126,10 +132,9 @@
       </div>
 
       <!-- Stars Section -->
-      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'stars'}"
-           (mouseenter)="selectElement('stars')"
-           (mouseleave)="selectElement(null)">
+           (click)="selectElement('stars')">
         <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
             [ngClass]="{'text-cyan-400': selectedElement() === 'stars', 'text-rose-500': selectedElement() !== 'stars'}">Stars</h4>
         <div class="space-y-2">
@@ -155,10 +160,9 @@
       </div>
 
       <!-- Attribute Section -->
-      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'attribute'}"
-           (mouseenter)="selectElement('attribute')"
-           (mouseleave)="selectElement(null)">
+           (click)="selectElement('attribute')">
         <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
             [ngClass]="{'text-cyan-400': selectedElement() === 'attribute', 'text-rose-500': selectedElement() !== 'attribute'}">Attribute</h4>
         <div class="space-y-2">
@@ -190,10 +194,9 @@
       </div>
 
       <!-- ATK Section -->
-      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'atk'}"
-           (mouseenter)="selectElement('atk')"
-           (mouseleave)="selectElement(null)">
+           (click)="selectElement('atk')">
         <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
             [ngClass]="{'text-cyan-400': selectedElement() === 'atk', 'text-rose-500': selectedElement() !== 'atk'}">ATK Box</h4>
         <div class="space-y-2">
@@ -225,10 +228,9 @@
       </div>
 
       <!-- DEF Section -->
-      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'def'}"
-           (mouseenter)="selectElement('def')"
-           (mouseleave)="selectElement(null)">
+           (click)="selectElement('def')">
         <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
             [ngClass]="{'text-cyan-400': selectedElement() === 'def', 'text-rose-500': selectedElement() !== 'def'}">DEF Box</h4>
         <div class="space-y-2">

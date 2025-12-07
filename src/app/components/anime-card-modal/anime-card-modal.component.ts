@@ -41,6 +41,13 @@ export class AnimeCardModalComponent implements AfterViewInit {
   // Canvas element reference as signal
   readonly canvasElement = signal<HTMLCanvasElement | null>(null);
   
+  // Drag state
+  private isDragging = false;
+  private dragType: 'move' | 'resize-tl' | 'resize-tr' | 'resize-bl' | 'resize-br' | null = null;
+  private dragStartX = 0;
+  private dragStartY = 0;
+  private dragStartConfig: { x: number; y: number; w: number; h: number } | null = null;
+  
   // Computed overlay style for reactivity - based on canvas dimensions
   readonly overlayStyle = computed(() => {
     const selected = this.selectedElement();
@@ -167,5 +174,197 @@ export class AnimeCardModalComponent implements AfterViewInit {
 
   closeModal(): void {
     this.close.emit();
+  }
+
+  // === DRAG & DROP HANDLERS ===
+  
+  onOverlayMouseDown(event: MouseEvent, type: 'move' | 'resize-tl' | 'resize-tr' | 'resize-bl' | 'resize-br'): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const selected = this.selectedElement();
+    if (!selected || selected === 'fontSize') return;
+    
+    this.isDragging = true;
+    this.dragType = type;
+    this.dragStartX = event.clientX;
+    this.dragStartY = event.clientY;
+    
+    // Store initial config values
+    const cfg = this.config();
+    const element = cfg[selected] as { x?: number; y?: number; w?: number; h?: number; size?: number };
+    
+    if (selected === 'stars') {
+      this.dragStartConfig = {
+        x: 0.1,
+        y: element.y ?? 0,
+        w: 0.8,
+        h: element.size ?? 0.04
+      };
+    } else {
+      this.dragStartConfig = {
+        x: element.x ?? 0,
+        y: element.y ?? 0,
+        w: element.w ?? 0.1,
+        h: element.h ?? 0.1
+      };
+    }
+    
+    // Add global listeners
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mouseup', this.onMouseUp);
+  }
+  
+  private onMouseMove = (event: MouseEvent): void => {
+    if (!this.isDragging || !this.dragStartConfig) return;
+    
+    const canvas = this.canvasElement();
+    const selected = this.selectedElement();
+    if (!canvas || !selected || selected === 'fontSize') return;
+    
+    const canvasWidth = canvas.offsetWidth;
+    const canvasHeight = canvas.offsetHeight;
+    
+    // Calculate delta in relative units (0-1)
+    const deltaX = (event.clientX - this.dragStartX) / canvasWidth;
+    const deltaY = (event.clientY - this.dragStartY) / canvasHeight;
+    
+    const current = this.config();
+    let newConfig: Partial<AnimeCardConfig> = {};
+    
+    if (selected === 'stars') {
+      // Stars only support Y movement and size change
+      if (this.dragType === 'move') {
+        const newY = Math.max(0, Math.min(1, this.dragStartConfig.y + deltaY));
+        newConfig = {
+          stars: { ...current.stars, y: newY }
+        };
+      } else if (this.dragType?.startsWith('resize')) {
+        // Resize changes star size
+        const newSize = Math.max(0.02, Math.min(0.1, this.dragStartConfig.h + deltaY));
+        newConfig = {
+          stars: { ...current.stars, size: newSize }
+        };
+      }
+    } else {
+      const elementConfig = current[selected] as { x: number; y: number; w: number; h: number };
+      
+      switch (this.dragType) {
+        case 'move':
+          newConfig = {
+            [selected]: {
+              ...elementConfig,
+              x: Math.max(0, Math.min(1, this.dragStartConfig.x + deltaX)),
+              y: Math.max(0, Math.min(1, this.dragStartConfig.y + deltaY))
+            }
+          };
+          break;
+          
+        case 'resize-br': // Bottom-right: change width and height
+          newConfig = {
+            [selected]: {
+              ...elementConfig,
+              w: Math.max(0.05, Math.min(1, this.dragStartConfig.w + deltaX)),
+              h: Math.max(0.05, Math.min(1, this.dragStartConfig.h + deltaY))
+            }
+          };
+          break;
+          
+        case 'resize-bl': // Bottom-left: change x, width and height
+          newConfig = {
+            [selected]: {
+              ...elementConfig,
+              x: Math.max(0, Math.min(1, this.dragStartConfig.x + deltaX)),
+              w: Math.max(0.05, Math.min(1, this.dragStartConfig.w - deltaX)),
+              h: Math.max(0.05, Math.min(1, this.dragStartConfig.h + deltaY))
+            }
+          };
+          break;
+          
+        case 'resize-tr': // Top-right: change y, width and height
+          newConfig = {
+            [selected]: {
+              ...elementConfig,
+              y: Math.max(0, Math.min(1, this.dragStartConfig.y + deltaY)),
+              w: Math.max(0.05, Math.min(1, this.dragStartConfig.w + deltaX)),
+              h: Math.max(0.05, Math.min(1, this.dragStartConfig.h - deltaY))
+            }
+          };
+          break;
+          
+        case 'resize-tl': // Top-left: change x, y, width and height
+          newConfig = {
+            [selected]: {
+              ...elementConfig,
+              x: Math.max(0, Math.min(1, this.dragStartConfig.x + deltaX)),
+              y: Math.max(0, Math.min(1, this.dragStartConfig.y + deltaY)),
+              w: Math.max(0.05, Math.min(1, this.dragStartConfig.w - deltaX)),
+              h: Math.max(0.05, Math.min(1, this.dragStartConfig.h - deltaY))
+            }
+          };
+          break;
+      }
+    }
+    
+    // Update config (this updates sliders via two-way binding)
+    this.animeCardGenerator.config.set({ ...current, ...newConfig });
+    
+    // Regenerate card preview
+    this.generateCard();
+  };
+  
+  private onMouseUp = (): void => {
+    this.isDragging = false;
+    this.dragType = null;
+    this.dragStartConfig = null;
+    
+    document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('mouseup', this.onMouseUp);
+  };
+  
+  // Click on canvas to select element at position
+  onCanvasClick(event: MouseEvent): void {
+    const canvas = this.canvasElement();
+    if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / canvas.offsetWidth;
+    const y = (event.clientY - rect.top) / canvas.offsetHeight;
+    
+    const cfg = this.config();
+    
+    // Check which element was clicked (in order of z-index priority)
+    // ATK box
+    if (this.isPointInRect(x, y, cfg.atk)) {
+      this.selectedElement.set('atk');
+      return;
+    }
+    // DEF box
+    if (this.isPointInRect(x, y, cfg.def)) {
+      this.selectedElement.set('def');
+      return;
+    }
+    // Attribute
+    if (this.isPointInRect(x, y, cfg.attribute)) {
+      this.selectedElement.set('attribute');
+      return;
+    }
+    // Stars (horizontal band)
+    if (y >= cfg.stars.y && y <= cfg.stars.y + cfg.stars.size) {
+      this.selectedElement.set('stars');
+      return;
+    }
+    // Artwork
+    if (this.isPointInRect(x, y, cfg.artwork)) {
+      this.selectedElement.set('artwork');
+      return;
+    }
+    
+    // Click outside - deselect
+    this.selectedElement.set(null);
+  }
+  
+  private isPointInRect(x: number, y: number, rect: { x: number; y: number; w: number; h: number }): boolean {
+    return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
   }
 }
