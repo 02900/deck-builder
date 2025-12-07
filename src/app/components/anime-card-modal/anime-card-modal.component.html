@@ -3,7 +3,7 @@
   (click)="closeModal()"
 >
   <div 
-    class="relative max-w-lg w-full"
+    class="relative flex gap-4 max-w-5xl w-full max-h-[90vh]"
     (click)="$event.stopPropagation()"
   >
     <!-- Close Button -->
@@ -17,29 +17,258 @@
       </svg>
     </button>
 
-    <!-- Anime Card Preview -->
-    <div class="glass rounded-2xl p-6">
-      <h3 class="text-xl font-bold text-white mb-4 text-center">Anime Style Card</h3>
+    <!-- Left Column: Card Preview -->
+    <div class="glass rounded-2xl p-4 flex flex-col min-w-[300px]">
+      <h3 class="text-lg font-bold text-white mb-3 text-center">Preview</h3>
       
-      <!-- Canvas Container -->
-      <div #canvasContainer class="flex justify-center min-h-[300px] items-center">
-        @if (isGenerating()) {
-          <div class="text-center">
-            <div class="w-12 h-12 border-4 border-[#e94560] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-            <p class="text-white font-medium">Generating anime card...</p>
+      <div class="flex-1 flex items-center justify-center">
+        <!-- Canvas Container with Overlay -->
+        <div class="relative inline-block">
+          <div #canvasContainer class="[&>canvas]:max-w-full [&>canvas]:max-h-[60vh] [&>canvas]:w-auto [&>canvas]:h-auto [&>canvas]:block [&>canvas]:rounded-2xl">
+            @if (isGenerating()) {
+              <div class="text-center p-8">
+                <div class="w-10 h-10 border-4 border-[#e94560] border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                <p class="text-white text-sm">Generating...</p>
+              </div>
+            }
           </div>
-        }
+          
+          <!-- Selection Overlay (positioned absolute over canvas) -->
+          @if (overlayStyle(); as style) {
+            <div 
+              class="absolute pointer-events-none border-4 border-cyan-400 bg-cyan-400/10 transition-all duration-100 z-50 rounded"
+              [style.top]="style['top']"
+              [style.left]="style['left']"
+              [style.width]="style['width']"
+              [style.height]="style['height']"
+            >
+              <!-- Corner handles like Figma -->
+              <div class="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm"></div>
+              <div class="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm"></div>
+              <div class="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm"></div>
+              <div class="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border-2 border-cyan-400 rounded-sm"></div>
+              <!-- Dimension label -->
+              <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-xs px-2 py-1 rounded font-bold shadow-lg">
+                {{ selectedElement() }}
+              </div>
+            </div>
+          }
+        </div>
       </div>
 
       @if (isReady()) {
-        <p class="text-sm text-green-400 text-center mt-4">
-          ✓ Download started!
-        </p>
-      } @else if (isGenerating()) {
-        <p class="text-sm text-slate-400 text-center mt-4">
-          Download will start automatically...
-        </p>
+        <div class="flex justify-center gap-2 mt-3 flex-wrap">
+          <button
+            (click)="downloadCard()"
+            class="px-3 py-2 bg-[#e94560] hover:bg-[#d63850] text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            Download
+          </button>
+          <button
+            (click)="copyConfigJson()"
+            class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            Copy JSON
+          </button>
+          <button
+            (click)="resetConfig()"
+            class="px-3 py-2 bg-slate-600 hover:bg-slate-500 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Reset
+          </button>
+        </div>
       }
+    </div>
+
+    <!-- Right Column: Sliders Configuration -->
+    <div class="glass rounded-2xl p-4 flex-1 overflow-y-auto max-h-[85vh] min-w-[320px]">
+      <h3 class="text-lg font-bold text-white mb-3">Layout Configuration</h3>
+      
+      <!-- Artwork Section -->
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+           [ngClass]="{'bg-cyan-900/30': selectedElement() === 'artwork'}"
+           (mouseenter)="selectElement('artwork')"
+           (mouseleave)="selectElement(null)">
+        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
+            [ngClass]="{'text-cyan-400': selectedElement() === 'artwork', 'text-rose-500': selectedElement() !== 'artwork'}">Artwork</h4>
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">X</label>
+            <input type="range" min="0" max="0.2" step="0.001" [value]="config().artwork.x" 
+              (input)="updateConfigValue('artwork', 'x', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().artwork.x | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">Y</label>
+            <input type="range" min="0" max="0.1" step="0.001" [value]="config().artwork.y" 
+              (input)="updateConfigValue('artwork', 'y', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().artwork.y | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">W</label>
+            <input type="range" min="0.7" max="1" step="0.001" [value]="config().artwork.w" 
+              (input)="updateConfigValue('artwork', 'w', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().artwork.w | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">H</label>
+            <input type="range" min="0.5" max="0.8" step="0.001" [value]="config().artwork.h" 
+              (input)="updateConfigValue('artwork', 'h', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().artwork.h | number:'1.3-3' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stars Section -->
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+           [ngClass]="{'bg-cyan-900/30': selectedElement() === 'stars'}"
+           (mouseenter)="selectElement('stars')"
+           (mouseleave)="selectElement(null)">
+        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
+            [ngClass]="{'text-cyan-400': selectedElement() === 'stars', 'text-rose-500': selectedElement() !== 'stars'}">Stars</h4>
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">Y</label>
+            <input type="range" min="0.65" max="0.8" step="0.001" [value]="config().stars.y" 
+              (input)="updateConfigValue('stars', 'y', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().stars.y | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">Size</label>
+            <input type="range" min="0.02" max="0.06" step="0.001" [value]="config().stars.size" 
+              (input)="updateConfigValue('stars', 'size', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().stars.size | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">Gap</label>
+            <input type="range" min="0" max="0.02" step="0.001" [value]="config().stars.gap" 
+              (input)="updateConfigValue('stars', 'gap', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().stars.gap | number:'1.3-3' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attribute Section -->
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+           [ngClass]="{'bg-cyan-900/30': selectedElement() === 'attribute'}"
+           (mouseenter)="selectElement('attribute')"
+           (mouseleave)="selectElement(null)">
+        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
+            [ngClass]="{'text-cyan-400': selectedElement() === 'attribute', 'text-rose-500': selectedElement() !== 'attribute'}">Attribute</h4>
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">X</label>
+            <input type="range" min="0.7" max="0.95" step="0.001" [value]="config().attribute.x" 
+              (input)="updateConfigValue('attribute', 'x', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().attribute.x | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">Y</label>
+            <input type="range" min="0.65" max="0.8" step="0.001" [value]="config().attribute.y" 
+              (input)="updateConfigValue('attribute', 'y', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().attribute.y | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">W</label>
+            <input type="range" min="0.05" max="0.15" step="0.001" [value]="config().attribute.w" 
+              (input)="updateConfigValue('attribute', 'w', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().attribute.w | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">H</label>
+            <input type="range" min="0.03" max="0.1" step="0.001" [value]="config().attribute.h" 
+              (input)="updateConfigValue('attribute', 'h', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().attribute.h | number:'1.3-3' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATK Section -->
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+           [ngClass]="{'bg-cyan-900/30': selectedElement() === 'atk'}"
+           (mouseenter)="selectElement('atk')"
+           (mouseleave)="selectElement(null)">
+        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
+            [ngClass]="{'text-cyan-400': selectedElement() === 'atk', 'text-rose-500': selectedElement() !== 'atk'}">ATK Box</h4>
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">X</label>
+            <input type="range" min="0" max="0.2" step="0.001" [value]="config().atk.x" 
+              (input)="updateConfigValue('atk', 'x', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().atk.x | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">Y</label>
+            <input type="range" min="0.75" max="0.9" step="0.001" [value]="config().atk.y" 
+              (input)="updateConfigValue('atk', 'y', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().atk.y | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">W</label>
+            <input type="range" min="0.2" max="0.5" step="0.001" [value]="config().atk.w" 
+              (input)="updateConfigValue('atk', 'w', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().atk.w | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">H</label>
+            <input type="range" min="0.05" max="0.2" step="0.001" [value]="config().atk.h" 
+              (input)="updateConfigValue('atk', 'h', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().atk.h | number:'1.3-3' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEF Section -->
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors"
+           [ngClass]="{'bg-cyan-900/30': selectedElement() === 'def'}"
+           (mouseenter)="selectElement('def')"
+           (mouseleave)="selectElement(null)">
+        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
+            [ngClass]="{'text-cyan-400': selectedElement() === 'def', 'text-rose-500': selectedElement() !== 'def'}">DEF Box</h4>
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">X</label>
+            <input type="range" min="0.4" max="0.7" step="0.001" [value]="config().def.x" 
+              (input)="updateConfigValue('def', 'x', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().def.x | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">Y</label>
+            <input type="range" min="0.75" max="0.9" step="0.001" [value]="config().def.y" 
+              (input)="updateConfigValue('def', 'y', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().def.y | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">W</label>
+            <input type="range" min="0.2" max="0.5" step="0.001" [value]="config().def.w" 
+              (input)="updateConfigValue('def', 'w', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().def.w | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">H</label>
+            <input type="range" min="0.05" max="0.2" step="0.001" [value]="config().def.h" 
+              (input)="updateConfigValue('def', 'h', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().def.h | number:'1.3-3' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Font Size -->
+      <div class="mb-2">
+        <h4 class="text-sm font-semibold text-[#e94560] mb-2">Font</h4>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-slate-300 w-8">Size</label>
+          <input type="range" min="0.03" max="0.1" step="0.001" [value]="config().fontSize" 
+            (input)="updateFontSize($event)" class="flex-1 accent-[#e94560]">
+          <span class="text-xs text-white w-12 text-right">{{ config().fontSize | number:'1.3-3' }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

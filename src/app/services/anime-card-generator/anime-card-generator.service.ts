@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Card } from '@classes/card';
+import { AnimeCardConfig, DEFAULT_ANIME_CARD_CONFIG } from './anime-card-config';
 
 export interface AnimeCardStyle {
   backgroundColor: string;
-  borderColor: string;
+  frameColor: string;
+  statsStripColor: string;
   isMonster: boolean;
 }
 
@@ -11,8 +13,20 @@ export interface AnimeCardStyle {
   providedIn: 'root',
 })
 export class AnimeCardGeneratorService {
+  // Aspect ratio 63:88 from composition
   private readonly CARD_WIDTH = 420;
-  private readonly CARD_HEIGHT = 610;
+  private readonly CARD_HEIGHT = Math.round(420 * (88 / 63)); // ~586
+
+  // Editable configuration
+  readonly config = signal<AnimeCardConfig>(DEFAULT_ANIME_CARD_CONFIG);
+
+  updateConfig(newConfig: Partial<AnimeCardConfig>): void {
+    this.config.update(current => ({ ...current, ...newConfig }));
+  }
+
+  resetConfig(): void {
+    this.config.set(DEFAULT_ANIME_CARD_CONFIG);
+  }
 
   getCardStyle(card: Card): AnimeCardStyle {
     const type = card.type.toLowerCase();
@@ -27,43 +41,103 @@ export class AnimeCardGeneratorService {
 
     if (isMonster) {
       return {
-        backgroundColor: hasEffect ? '#ff8c00' : '#ffd700',
-        borderColor: hasEffect ? '#cc7000' : '#ccac00',
+        backgroundColor: hasEffect ? '#d4702a' : '#c9a227', // Orange/Yellow gradient base
+        frameColor: hasEffect ? '#8b4513' : '#8b7500',
+        statsStripColor: hasEffect ? '#d4702a' : '#c9a227',
         isMonster: true,
       };
     }
 
     if (type.includes('spell') || type.includes('magic')) {
       return {
-        backgroundColor: '#1d9e5a',
-        borderColor: '#157a45',
+        backgroundColor: '#1e8449',
+        frameColor: '#145a32',
+        statsStripColor: '#1e8449',
         isMonster: false,
       };
     }
 
     if (type.includes('trap')) {
       return {
-        backgroundColor: '#bc5a84',
-        borderColor: '#9a4a6c',
+        backgroundColor: '#922b5b',
+        frameColor: '#641e3e',
+        statsStripColor: '#922b5b',
         isMonster: false,
       };
     }
 
     return {
-      backgroundColor: '#1d9e5a',
-      borderColor: '#157a45',
+      backgroundColor: '#1e8449',
+      frameColor: '#145a32',
+      statsStripColor: '#1e8449',
       isMonster: false,
     };
   }
 
   private getProxyUrl(url: string): string {
-    // Convert external image URL to proxy URL for CORS
-    // https://images.ygoprodeck.com/images/cards_cropped/46986421.jpg
-    // -> /api/images/images/cards_cropped/46986421.jpg
     if (url.includes('images.ygoprodeck.com')) {
       return url.replace('https://images.ygoprodeck.com', '/api/images');
     }
     return url;
+  }
+
+  private getAttributeAssetUrl(card: Card): string | null {
+    const attribute = card.attribute?.toLowerCase();
+    const type = card.type?.toLowerCase() || '';
+    
+    // Map attributes to asset files
+    if (type.includes('spell')) {
+      return 'assets/attributes/spell.png';
+    }
+    if (type.includes('trap')) {
+      return 'assets/attributes/Trap.png';
+    }
+    
+    // Monster attributes
+    const attributeMap: Record<string, string> = {
+      'dark': 'assets/attributes/dark.png',
+      'light': 'assets/attributes/light.png',
+      'earth': 'assets/attributes/earth.png',
+      'water': 'assets/attributes/water.png',
+      'fire': 'assets/attributes/fire.png',
+      'wind': 'assets/attributes/wind.png',
+      'divine': 'assets/attributes/divine.png',
+    };
+    
+    if (attribute && attributeMap[attribute]) {
+      return attributeMap[attribute];
+    }
+    
+    return null;
+  }
+
+  private getLevelAssetUrl(): string {
+    return 'assets/Level.png';
+  }
+
+  private getLayoutAssetUrl(card: Card): string {
+    const type = card.type?.toLowerCase() || '';
+    
+    // Check card type and return appropriate layout
+    if (type.includes('fusion')) {
+      return 'assets/Layout/layout-monster-fusion.png';
+    }
+    if (type.includes('trap')) {
+      return 'assets/Layout/layout-monster-trap.png';
+    }
+    if (type.includes('spell') || type.includes('magic')) {
+      return 'assets/Layout/layout-monster-spell.png';
+    }
+    if (type.includes('effect') || type.includes('synchro') || type.includes('xyz') || 
+        type.includes('link') || type.includes('ritual') || type.includes('pendulum')) {
+      return 'assets/Layout/layout-monster-effect.png';
+    }
+    if (type.includes('monster')) {
+      return 'assets/Layout/layout-monster.png';
+    }
+    
+    // Default to spell layout
+    return 'assets/Layout/layout-monster-spell.png';
   }
 
   async preloadImage(url: string): Promise<HTMLImageElement> {
@@ -71,7 +145,6 @@ export class AnimeCardGeneratorService {
     
     return new Promise((resolve, reject) => {
       const img = new Image();
-      // Only set crossOrigin if not using proxy
       if (proxyUrl === url) {
         img.crossOrigin = 'anonymous';
       }
@@ -86,106 +159,188 @@ export class AnimeCardGeneratorService {
 
   async generateAnimeCardCanvas(card: Card): Promise<HTMLCanvasElement> {
     const style = this.getCardStyle(card);
+    const cfg = this.config();
+    const W = this.CARD_WIDTH;
+    const H = this.CARD_HEIGHT;
+    
     const canvas = document.createElement('canvas');
-    canvas.width = this.CARD_WIDTH * 2; // 2x for higher quality
-    canvas.height = this.CARD_HEIGHT * 2;
+    canvas.width = W * 2;
+    canvas.height = H * 2;
     const ctx = canvas.getContext('2d')!;
-    ctx.scale(2, 2); // Scale for quality
+    ctx.scale(2, 2);
 
-    // Draw card background
-    this.drawRoundedRect(ctx, 0, 0, this.CARD_WIDTH, this.CARD_HEIGHT, 16, style.backgroundColor);
+    // === STEP 1: Draw artwork CLIPPED to artwork area ===
+    const artX = W * cfg.artwork.x;
+    const artY = H * cfg.artwork.y;
+    const artW = W * cfg.artwork.w;
+    const artH = H * cfg.artwork.h;
     
-    // Draw border
-    ctx.strokeStyle = style.borderColor;
-    ctx.lineWidth = 4;
-    this.strokeRoundedRect(ctx, 2, 2, this.CARD_WIDTH - 4, this.CARD_HEIGHT - 4, 14);
-
-    // Draw name box
-    this.drawRoundedRect(ctx, 16, 16, this.CARD_WIDTH - 32, 44, 8, 'rgba(255,255,255,0.4)');
-    ctx.fillStyle = '#000';
-    ctx.font = 'bold 22px Arial';
-    ctx.fillText(card.name, 26, 46, this.CARD_WIDTH - 52);
-
-    // Draw stars for monsters
-    let artworkY = 70;
-    if (style.isMonster && card.level) {
-      const starY = 68;
-      ctx.font = '20px Arial';
-      ctx.fillStyle = '#ffd700';
-      ctx.textAlign = 'center';
-      const stars = '★'.repeat(card.level);
-      ctx.fillText(stars, this.CARD_WIDTH / 2, starY + 16);
-      ctx.textAlign = 'left';
-      artworkY = 92;
-    }
-
-    // Draw artwork frame
-    const artworkX = 16;
-    const artworkWidth = this.CARD_WIDTH - 32;
-    const artworkHeight = 280;
-    
-    this.drawRoundedRect(ctx, artworkX, artworkY, artworkWidth, artworkHeight, 12, 'rgba(0,0,0,0.3)');
-    
-    // Draw artwork image
     try {
       const artworkUrl = card.card_images[0].image_url_cropped;
       const img = await this.preloadImage(artworkUrl);
       
-      // Clip to rounded rect
+      // Clip to artwork area
       ctx.save();
-      this.clipRoundedRect(ctx, artworkX + 4, artworkY + 4, artworkWidth - 8, artworkHeight - 8, 10);
-      ctx.drawImage(img, artworkX + 4, artworkY + 4, artworkWidth - 8, artworkHeight - 8);
+      ctx.beginPath();
+      ctx.rect(artX, artY, artW, artH);
+      ctx.clip();
+      
+      // Cover fit: image is 1:1, target area is ~278:263 (wider than tall)
+      // We need to scale to cover and center
+      const imgRatio = img.width / img.height; // 1:1 = 1
+      const areaRatio = artW / artH; // ~278:263 > 1
+      let drawW, drawH, drawX, drawY;
+      
+      if (imgRatio > areaRatio) {
+        // Image is wider than area - fit height, crop width
+        drawH = artH;
+        drawW = artH * imgRatio;
+        drawX = artX - (drawW - artW) / 2;
+        drawY = artY;
+      } else {
+        // Image is taller than area (or equal) - fit width, crop height
+        drawW = artW;
+        drawH = artW / imgRatio;
+        drawX = artX;
+        drawY = artY - (drawH - artH) / 2;
+      }
+      
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
       ctx.restore();
     } catch (e) {
       console.error('Failed to load artwork:', e);
+      ctx.fillStyle = '#333';
+      ctx.fillRect(artX, artY, artW, artH);
     }
 
-    // Draw type line
-    const typeY = artworkY + artworkHeight + 12;
-    this.drawRoundedRect(ctx, 16, typeY, this.CARD_WIDTH - 32, 28, 6, 'rgba(0,0,0,0.3)');
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 12px Arial';
-    ctx.fillText(card.type.toUpperCase(), 26, typeY + 19);
-    if (card.attribute) {
-      ctx.textAlign = 'right';
-      ctx.fillText(card.attribute.toUpperCase(), this.CARD_WIDTH - 26, typeY + 19);
-      ctx.textAlign = 'left';
+    // === STEP 2: Draw layout frame on top (100% size) ===
+    try {
+      const layoutUrl = this.getLayoutAssetUrl(card);
+      const layoutImg = await this.preloadImage(layoutUrl);
+      ctx.drawImage(layoutImg, 0, 0, W, H);
+    } catch (e) {
+      console.error('Failed to load layout:', e);
     }
 
-    // Draw description box
-    const descY = typeY + 38;
-    const descHeight = 90;
-    this.drawRoundedRect(ctx, 16, descY, this.CARD_WIDTH - 32, descHeight, 8, 'rgba(255,255,255,0.9)');
-    ctx.fillStyle = '#000';
-    ctx.font = '12px Arial';
-    this.wrapText(ctx, card.desc, 26, descY + 18, this.CARD_WIDTH - 52, 14, descHeight - 20);
-
-    // Draw stats for monsters
-    if (style.isMonster) {
-      const statsY = descY + descHeight + 10;
-      this.drawRoundedRect(ctx, 16, statsY, this.CARD_WIDTH - 32, 32, 6, 'rgba(0,0,0,0.4)');
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 14px Arial';
-      ctx.textAlign = 'right';
+    // === STEP 3: LEVEL STARS ===
+    if (style.isMonster && card.level) {
+      const starsY = H * cfg.stars.y;
+      const starSize = W * cfg.stars.size;
+      const gap = W * cfg.stars.gap;
+      const totalStarsWidth = card.level * starSize + (card.level - 1) * gap;
+      const starsStartX = (W - totalStarsWidth) / 2;
       
-      const statsText = [];
-      if (card.atk !== undefined) statsText.push(`ATK/${card.atk}`);
-      if (card.def !== undefined) statsText.push(`DEF/${card.def}`);
-      ctx.fillText(statsText.join('    '), this.CARD_WIDTH - 26, statsY + 22);
-      ctx.textAlign = 'left';
+      try {
+        const levelImg = await this.preloadImage(this.getLevelAssetUrl());
+        for (let i = 0; i < card.level; i++) {
+          const starX = starsStartX + i * (starSize + gap);
+          ctx.drawImage(levelImg, starX, starsY, starSize, starSize);
+        }
+      } catch (e) {
+        // Fallback to drawn stars
+        for (let i = 0; i < card.level; i++) {
+          const starX = starsStartX + i * (starSize + gap);
+          this.drawStar(ctx, starX + starSize/2, starsY + starSize/2, starSize/2);
+        }
+      }
     }
 
-    // Draw card ID
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-    ctx.font = 'bold 11px Arial';
-    ctx.textAlign = 'right';
-    ctx.fillText(String(card.id), this.CARD_WIDTH - 16, this.CARD_HEIGHT - 12);
+    // === STEP 4: ATTRIBUTE ICON ===
+    const attrUrl = this.getAttributeAssetUrl(card);
+    if (attrUrl) {
+      try {
+        const attrImg = await this.preloadImage(attrUrl);
+        const attrW = W * cfg.attribute.w;
+        const attrH = H * cfg.attribute.h;
+        const attrX = W * cfg.attribute.x;
+        const attrY = H * cfg.attribute.y;
+        ctx.drawImage(attrImg, attrX, attrY, attrW, attrH);
+      } catch (e) {
+        console.error('Failed to load attribute icon:', e);
+      }
+    }
+
+    // === STEP 5: ATK/DEF VALUES ===
+    if (style.isMonster) {
+      const atkBoxX = W * cfg.atk.x;
+      const atkBoxY = H * cfg.atk.y;
+      const atkBoxW = W * cfg.atk.w;
+      const atkBoxH = H * cfg.atk.h;
+      
+      ctx.fillStyle = '#000';
+      ctx.font = `bold ${Math.round(H * cfg.fontSize)}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(card.atk ?? '?'), atkBoxX + atkBoxW/2, atkBoxY + atkBoxH/2);
+
+      const defBoxX = W * cfg.def.x;
+      const defBoxW = W * cfg.def.w;
+      ctx.fillText(String(card.def ?? '?'), defBoxX + defBoxW/2, atkBoxY + atkBoxH/2);
+    }
+
     ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
 
     return canvas;
   }
 
-  private drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number, fill: string): void {
+  private drawStatBox(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, borderColor: string, borderWidth: number = 3): void {
+    // Cream/beige background
+    ctx.fillStyle = '#f5f0dc';
+    ctx.fillRect(x, y, w, h);
+    
+    // Border
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = borderWidth;
+    ctx.strokeRect(x, y, w, h);
+  }
+
+  private drawStar(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number): void {
+    // Draw a star with gradient (red/orange like in the image)
+    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    gradient.addColorStop(0, '#ffff00');
+    gradient.addColorStop(0.5, '#ff6600');
+    gradient.addColorStop(1, '#cc0000');
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    
+    const spikes = 5;
+    const outerRadius = radius;
+    const innerRadius = radius * 0.5;
+    
+    for (let i = 0; i < spikes * 2; i++) {
+      const r = i % 2 === 0 ? outerRadius : innerRadius;
+      const angle = (Math.PI / spikes) * i - Math.PI / 2;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+      
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+    
+    ctx.closePath();
+    ctx.fill();
+    
+    // Add border
+    ctx.strokeStyle = '#8b0000';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  private darkenColor(hex: string, percent: number): string {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.max((num >> 16) - amt, 0);
+    const G = Math.max((num >> 8 & 0x00FF) - amt, 0);
+    const B = Math.max((num & 0x0000FF) - amt, 0);
+    return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+  }
+
+  private drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number, fill: string | CanvasGradient): void {
     ctx.fillStyle = fill;
     ctx.beginPath();
     ctx.moveTo(x + r, y);

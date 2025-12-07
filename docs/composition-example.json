@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "name": "yugioh_anime_layout",
+    "units": "relative_0_to_1",
+    "aspectRatio": { "w": 63, "h": 88 },
+    "notes": [
+      "All rects are expressed as x,y,w,h in 0..1 relative to the full canvas.",
+      "Draw order: artwork (clipped to artworkArea) -> layout (full size) -> stars -> attributeIcon -> atkValue -> defValue",
+      "The layout PNG is drawn at 100% size, artwork is clipped to fit inside the gray frame area.",
+      "Layout has transparent area where artwork shows through."
+    ]
+  },
+  "styleDefaults": {
+    "statFont": { "family": "serif", "weight": 700, "sizeH": 0.065 },
+    "starSize": 0.038
+  },
+  "elements": [
+    {
+      "id": "artworkArea",
+      "type": "rect",
+      "x": 0.035,
+      "y": 0.015,
+      "w": 0.93,
+      "h": 0.68,
+      "z": 10,
+      "notes": "Area where artwork is drawn, clipped to this rectangle. Matches the transparent area of the layout PNG."
+    },
+    {
+      "id": "artworkImage",
+      "type": "image",
+      "x": 0.035,
+      "y": 0.015,
+      "w": 0.93,
+      "h": 0.68,
+      "z": 20,
+      "fit": "cover",
+      "notes": "Card artwork clipped to artworkArea, drawn BEFORE the layout"
+    },
+    {
+      "id": "layoutFrame",
+      "type": "image",
+      "x": 0.0,
+      "y": 0.0,
+      "w": 1.0,
+      "h": 1.0,
+      "z": 30,
+      "fit": "fill",
+      "notes": "Layout PNG drawn at 100% covering entire canvas. Has transparency where artwork shows."
+    },
+    {
+      "id": "levelStarsRow",
+      "type": "repeater",
+      "x": 0.20,
+      "y": 0.715,
+      "w": 0.45,
+      "h": 0.045,
+      "z": 40,
+      "item": {
+        "type": "image",
+        "src": "assets/Level.png"
+      },
+      "repeaterProps": {
+        "maxCount": 12,
+        "direction": "horizontal",
+        "gap": 0.005,
+        "align": "center"
+      },
+      "notes": "Level stars centered in the stats strip, just below the artwork frame"
+    },
+    {
+      "id": "attributeIcon",
+      "type": "image",
+      "x": 0.85,
+      "y": 0.705,
+      "w": 0.10,
+      "h": 0.065,
+      "z": 50,
+      "fit": "contain",
+      "notes": "Circular attribute icon (DARK, LIGHT, etc.) to the right of stars"
+    },
+    {
+      "id": "atkValue",
+      "type": "textArea",
+      "x": 0.065,
+      "y": 0.795,
+      "w": 0.38,
+      "h": 0.12,
+      "z": 60,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "fontRef": "statFont",
+      "textColor": "#000000",
+      "notes": "ATK value text, positioned inside the left stat box of the layout"
+    },
+    {
+      "id": "defValue",
+      "type": "textArea",
+      "x": 0.555,
+      "y": 0.795,
+      "w": 0.38,
+      "h": 0.12,
+      "z": 60,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "fontRef": "statFont",
+      "textColor": "#000000",
+      "notes": "DEF value text, positioned inside the right stat box of the layout"
+    }
+  ]
+}
