@@ -59,6 +59,18 @@
       </svg>
     </button>
 
+    <!-- Export Anime Deck -->
+    <button
+      (click)="exportAnimeDeck()"
+      [disabled]="(deckService.mainDeck().length === 0 && deckService.extraDeck().length === 0) || isExporting()"
+      class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      title="Export Anime Deck Images"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      </svg>
+    </button>
+
     <!-- Import YDK -->
     <label
       class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
@@ -169,6 +181,26 @@
           Close
         </button>
       </div>
+    </div>
+  </div>
+}
+
+<!-- Exporting Overlay -->
+@if (isExporting()) {
+  <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div class="text-center">
+      <div class="w-16 h-16 border-4 border-[#e94560] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <h3 class="text-xl font-bold text-white mb-2">Exporting Anime Deck...</h3>
+      <p class="text-gray-400 mb-4">Generating card images</p>
+      
+      <!-- Progress Bar -->
+      <div class="w-64 h-2 bg-gray-700 rounded-full overflow-hidden mx-auto">
+        <div 
+          class="h-full bg-[#e94560] transition-all duration-300"
+          [style.width.%]="exportProgress()"
+        ></div>
+      </div>
+      <p class="text-sm text-gray-400 mt-2">{{ exportProgress() }}%</p>
     </div>
   </div>
 }

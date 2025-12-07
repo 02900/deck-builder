@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DeckService } from '@services/deck/deck.service';
+import { AnimeCardGeneratorService } from '@services/anime-card-generator/anime-card-generator.service';
+import JSZip from 'jszip';
 
 @Component({
   selector: 'app-deck-manager',
@@ -11,12 +13,17 @@ import { DeckService } from '@services/deck/deck.service';
 })
 export class DeckManagerComponent {
   readonly deckService = inject(DeckService);
+  private readonly animeCardGenerator = inject(AnimeCardGeneratorService);
 
   readonly showSaveModal = signal(false);
   readonly showLoadModal = signal(false);
   readonly deckName = signal('');
   readonly isLoading = signal(false);
+  readonly isExporting = signal(false);
+  readonly exportProgress = signal(0);
   readonly errorMessage = signal('');
+
+  // ... rest of the component ...
 
   // Save deck
   openSaveModal(): void {
@@ -94,5 +101,61 @@ export class DeckManagerComponent {
 
     // Reset input
     input.value = '';
+  }
+
+  // Export Anime Deck
+  async exportAnimeDeck(): Promise<void> {
+    const mainDeck = this.deckService.mainDeck();
+    const extraDeck = this.deckService.extraDeck();
+    
+    if (mainDeck.length === 0 && extraDeck.length === 0) return;
+
+    this.isExporting.set(true);
+    this.exportProgress.set(0);
+
+    try {
+      const zip = new JSZip();
+      // Get unique cards by ID to avoid duplicates
+      const allCards = [...mainDeck, ...extraDeck];
+      const uniqueCards = Array.from(new Map(allCards.map(card => [card.id, card])).values());
+      
+      const total = uniqueCards.length;
+      let processed = 0;
+
+      for (const card of uniqueCards) {
+        // Set config for this card type (important to ensure correct layout/stars etc)
+        this.animeCardGenerator.setConfigForCard(card);
+        
+        const canvas = await this.animeCardGenerator.generateAnimeCardCanvas(card);
+        
+        // Convert canvas to blob
+        const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
+        
+        if (blob) {
+          zip.file(`${card.id}.png`, blob);
+        }
+
+        processed++;
+        this.exportProgress.set(Math.round((processed / total) * 100));
+      }
+
+      // Generate zip
+      const content = await zip.generateAsync({ type: 'blob' });
+      
+      // Download
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${this.deckService.currentDeckName() || 'deck'}-anime-cards.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error('Failed to export anime deck:', error);
+      alert('Failed to export deck images. Check console for details.');
+    } finally {
+      this.isExporting.set(false);
+      this.exportProgress.set(0);
+    }
   }
 }
