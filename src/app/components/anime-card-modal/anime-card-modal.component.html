@@ -60,6 +60,61 @@
               </div>
             </div>
           }
+          
+          <!-- Distance Guides (Figma-style) - shown while dragging -->
+          @if (isDraggingSignal() && distanceGuides(); as guides) {
+            <!-- Top distance line -->
+            @if (guides.top > 5) {
+              <div class="absolute pointer-events-none z-40"
+                   [style.left.px]="guides.elementLeft + guides.elementWidth / 2"
+                   [style.top.px]="0"
+                   [style.height.px]="guides.elementTop">
+                <div class="w-px h-full bg-rose-500"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-500 text-white text-[10px] px-1 rounded font-mono">
+                  {{ guides.top }}
+                </div>
+              </div>
+            }
+            
+            <!-- Bottom distance line -->
+            @if (guides.bottom > 5) {
+              <div class="absolute pointer-events-none z-40"
+                   [style.left.px]="guides.elementLeft + guides.elementWidth / 2"
+                   [style.top.px]="guides.elementTop + guides.elementHeight"
+                   [style.height.px]="guides.bottom">
+                <div class="w-px h-full bg-rose-500"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-500 text-white text-[10px] px-1 rounded font-mono">
+                  {{ guides.bottom }}
+                </div>
+              </div>
+            }
+            
+            <!-- Left distance line -->
+            @if (guides.left > 5) {
+              <div class="absolute pointer-events-none z-40"
+                   [style.left.px]="0"
+                   [style.top.px]="guides.elementTop + guides.elementHeight / 2"
+                   [style.width.px]="guides.elementLeft">
+                <div class="h-px w-full bg-rose-500"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-500 text-white text-[10px] px-1 rounded font-mono">
+                  {{ guides.left }}
+                </div>
+              </div>
+            }
+            
+            <!-- Right distance line -->
+            @if (guides.right > 5) {
+              <div class="absolute pointer-events-none z-40"
+                   [style.left.px]="guides.elementLeft + guides.elementWidth"
+                   [style.top.px]="guides.elementTop + guides.elementHeight / 2"
+                   [style.width.px]="guides.right">
+                <div class="h-px w-full bg-rose-500"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-500 text-white text-[10px] px-1 rounded font-mono">
+                  {{ guides.right }}
+                </div>
+              </div>
+            }
+          }
         </div>
       </div>
 

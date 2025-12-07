@@ -48,6 +48,64 @@ export class AnimeCardModalComponent implements AfterViewInit {
   private dragStartY = 0;
   private dragStartConfig: { x: number; y: number; w: number; h: number } | null = null;
   
+  // Signal to track if currently dragging (for showing distance guides)
+  readonly isDraggingSignal = signal(false);
+  
+  // Computed distance guides for Figma-style indicators
+  readonly distanceGuides = computed(() => {
+    const selected = this.selectedElement();
+    const canvas = this.canvasElement();
+    if (!selected || selected === 'fontSize' || !canvas) return null;
+    
+    const cfg = this.config();
+    const element = cfg[selected] as { x?: number; y?: number; w?: number; h?: number; size?: number };
+    if (!element) return null;
+    
+    const canvasWidth = canvas.offsetWidth;
+    const canvasHeight = canvas.offsetHeight;
+    
+    let x: number, y: number, w: number, h: number;
+    
+    if (selected === 'stars') {
+      x = 0.1;
+      y = element.y ?? 0;
+      w = 0.8;
+      h = element.size ?? 0.04;
+    } else {
+      x = element.x ?? 0;
+      y = element.y ?? 0;
+      w = element.w ?? 0.1;
+      h = element.h ?? 0.1;
+    }
+    
+    // Calculate distances in pixels
+    const top = y * canvasHeight;
+    const left = x * canvasWidth;
+    const right = (1 - x - w) * canvasWidth;
+    const bottom = (1 - y - h) * canvasHeight;
+    const width = w * canvasWidth;
+    const height = h * canvasHeight;
+    
+    return {
+      top: Math.round(top),
+      left: Math.round(left),
+      right: Math.round(right),
+      bottom: Math.round(bottom),
+      // Positions for the guide lines
+      topLineY: top / 2,
+      bottomLineY: top + height + bottom / 2,
+      leftLineX: left / 2,
+      rightLineX: left + width + right / 2,
+      // Element bounds
+      elementTop: top,
+      elementLeft: left,
+      elementWidth: width,
+      elementHeight: height,
+      canvasWidth,
+      canvasHeight
+    };
+  });
+  
   // Computed overlay style for reactivity - based on canvas dimensions
   readonly overlayStyle = computed(() => {
     const selected = this.selectedElement();
@@ -188,6 +246,7 @@ export class AnimeCardModalComponent implements AfterViewInit {
     if (!selected || selected === 'fontSize') return;
     
     this.isDragging = true;
+    this.isDraggingSignal.set(true);
     this.dragType = type;
     this.dragStartX = event.clientX;
     this.dragStartY = event.clientY;
@@ -317,6 +376,7 @@ export class AnimeCardModalComponent implements AfterViewInit {
   
   private onMouseUp = (): void => {
     this.isDragging = false;
+    this.isDraggingSignal.set(false);
     this.dragType = null;
     this.dragStartConfig = null;
     
