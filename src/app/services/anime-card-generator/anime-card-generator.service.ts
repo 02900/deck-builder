@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Card } from '@classes/card';
-import { AnimeCardConfig, DEFAULT_ANIME_CARD_CONFIG } from './anime-card-config';
+import { AnimeCardConfig, DEFAULT_ANIME_CARD_CONFIG, getConfigForCardType } from './anime-card-config';
 
 export interface AnimeCardStyle {
   backgroundColor: string;
@@ -19,13 +19,22 @@ export class AnimeCardGeneratorService {
 
   // Editable configuration
   readonly config = signal<AnimeCardConfig>(DEFAULT_ANIME_CARD_CONFIG);
+  
+  // Current card type for config selection
+  private currentCardType: string = '';
 
   updateConfig(newConfig: Partial<AnimeCardConfig>): void {
     this.config.update(current => ({ ...current, ...newConfig }));
   }
 
   resetConfig(): void {
-    this.config.set(DEFAULT_ANIME_CARD_CONFIG);
+    this.config.set(getConfigForCardType(this.currentCardType));
+  }
+  
+  // Set config based on card type
+  setConfigForCard(card: Card): void {
+    this.currentCardType = card.type;
+    this.config.set(getConfigForCardType(card.type));
   }
 
   getCardStyle(card: Card): AnimeCardStyle {

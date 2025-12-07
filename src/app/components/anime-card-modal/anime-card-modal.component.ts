@@ -94,6 +94,8 @@ export class AnimeCardModalComponent implements AfterViewInit {
   });
 
   async ngAfterViewInit() {
+    // Set config based on card type
+    this.animeCardGenerator.setConfigForCard(this.card());
     await this.generateCard();
   }
 

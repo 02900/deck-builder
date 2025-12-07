@@ -41,35 +41,132 @@ export interface AnimeCardConfig {
   fontSize: number;
 }
 
-export const DEFAULT_ANIME_CARD_CONFIG: AnimeCardConfig = {
+// Card type for configuration selection
+export type CardConfigType = 'monster' | 'spell' | 'trap';
+
+// Monster card configuration (also used as fallback)
+export const MONSTER_CARD_CONFIG: AnimeCardConfig = {
   artwork: {
-    x: 0.055,
-    y: 0.025,
-    w: 0.89,
-    h: 0.655,
+    x: 0.07846041055718475,
+    y: 0.07331932773109244,
+    w: 0.8460117302052786,
+    h: 0.6360924369747899,
   },
   stars: {
-    y: 0.715,
+    y: 0.7423109243697479,
     size: 0.038,
     gap: 0.005,
   },
   attribute: {
-    x: 0.85,
-    y: 0.705,
-    w: 0.10,
+    x: 0.7620234604105572,
+    y: 0.728109243697479,
+    w: 0.1,
     h: 0.065,
   },
   atk: {
-    x: 0.065,
-    y: 0.795,
+    x: 0.13030205278592377,
+    y: 0.8034033613445378,
     w: 0.38,
     h: 0.12,
   },
   def: {
-    x: 0.555,
-    y: 0.795,
-    w: 0.38,
-    h: 0.12,
+    x: 0.5227419354838709,
+    y: 0.8055042016806723,
+    w: 0.3389442815249267,
+    h: 0.09478991596638654,
   },
   fontSize: 0.065,
 };
+
+// Spell card configuration (no stars, no ATK/DEF)
+export const SPELL_CARD_CONFIG: AnimeCardConfig = {
+  artwork: {
+    x: 0.07846041055718475,
+    y: 0.07331932773109244,
+    w: 0.8460117302052786,
+    h: 0.75,
+  },
+  stars: {
+    y: 0.85,
+    size: 0,
+    gap: 0,
+  },
+  attribute: {
+    x: 0.4448680351906158,
+    y: 0.7900840336134454,
+    w: 0.1,
+    h: 0.065,
+  },
+  atk: {
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+  },
+  def: {
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+  },
+  fontSize: 0.065,
+};
+
+// Trap card configuration (no stars, no ATK/DEF)
+export const TRAP_CARD_CONFIG: AnimeCardConfig = {
+  artwork: {
+    x: 0.07846041055718475,
+    y: 0.07331932773109244,
+    w: 0.8460117302052786,
+    h: 0.75,
+  },
+  stars: {
+    y: 0.85,
+    size: 0,
+    gap: 0,
+  },
+  attribute: {
+    x: 0.4448680351906158,
+    y: 0.7900840336134454,
+    w: 0.1,
+    h: 0.065,
+  },
+  atk: {
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+  },
+  def: {
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+  },
+  fontSize: 0.065,
+};
+
+// Map of configurations by card type
+export const CARD_CONFIGS: Record<CardConfigType, AnimeCardConfig> = {
+  monster: MONSTER_CARD_CONFIG,
+  spell: SPELL_CARD_CONFIG,
+  trap: TRAP_CARD_CONFIG,
+};
+
+// Default/fallback configuration (monster)
+export const DEFAULT_ANIME_CARD_CONFIG = MONSTER_CARD_CONFIG;
+
+// Helper to get config by card type string
+export function getConfigForCardType(cardType: string): AnimeCardConfig {
+  const type = cardType.toLowerCase();
+  
+  if (type.includes('spell') || type.includes('magic')) {
+    return SPELL_CARD_CONFIG;
+  }
+  if (type.includes('trap')) {
+    return TRAP_CARD_CONFIG;
+  }
+  
+  // Default to monster for all monster types and unknown types
+  return MONSTER_CARD_CONFIG;
+}
