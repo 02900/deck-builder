@@ -1,2 +1,6 @@
-<span *ngIf="key">{{ key }}</span>
-<span *ngIf="value">{{ value }}</span>
+@if (key()) {
+  <span>{{ key() }}</span>
+}
+@if (value()) {
+  <span>{{ value() }}</span>
+}

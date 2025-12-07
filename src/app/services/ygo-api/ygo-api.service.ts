@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { Card } from '@classes/card';
-import { IQueryParams, IQueryConfig, IQueryResult } from './query.interface';
+import type { IQueryParams, IQueryConfig, IQueryResult } from './query.interface';
 
 const LIMIT_RESULTS = 45;
 const OFFSET_RESULTS = 0;
@@ -13,9 +13,8 @@ const OFFSET_RESULTS = 0;
   providedIn: 'root',
 })
 export class YgoApiService {
+  private readonly http = inject(HttpClient);
   private readonly API_URL = environment.apiUrl;
-
-  constructor(private readonly http: HttpClient) { }
 
   query(query: IQueryParams, queryConfig?: IQueryConfig): Observable<Card[]> {
     const searchByText = query.fname || query.desc;

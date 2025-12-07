@@ -1,27 +1,34 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Observable } from 'rxjs';
-import { IQueryParams, YgoApiService } from '@services/ygo-api';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Subject, switchMap } from 'rxjs';
+import type { IQueryParams } from '@services/ygo-api';
+import { YgoApiService } from '@services/ygo-api';
 import { Card } from '@classes/card';
+import { FormSearchComponent } from './form-search/form-search.component';
+import { CardListComponent } from '@components/card-list/card-list.component';
 
 @Component({
   selector: 'app-card-catalog',
   templateUrl: './card-catalog.component.html',
   styleUrls: ['./card-catalog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [CdkDropList, FormSearchComponent, CardListComponent],
 })
 export class CardCatalogComponent {
-  cards$?: Observable<Card[]>;
+  private readonly ygoApi = inject(YgoApiService);
+  private readonly queryParams$ = new Subject<IQueryParams>();
 
-  constructor(private readonly ygoApi: YgoApiService) { }
+  readonly cards = toSignal(
+    this.queryParams$.pipe(switchMap((params) => this.ygoApi.query(params))),
+    { initialValue: [] as Card[] }
+  );
 
-  updateCatalog(queryParams: IQueryParams) {
-    this.cards$ = this.ygoApi.query(queryParams);
+  updateCatalog(queryParams: IQueryParams): void {
+    this.queryParams$.next(queryParams);
   }
 
-  drop(event: CdkDragDrop<Card[]>) {
-    const index = event.previousIndex;
-    event.previousContainer.data.splice(index, 1);
+  drop(event: CdkDragDrop<Card[]>): void {
+    event.previousContainer.data.splice(event.previousIndex, 1);
   }
 }

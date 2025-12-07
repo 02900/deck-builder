@@ -1,27 +1,27 @@
-<div *ngIf="mainDeck" class="deck">
+<div class="deck">
   <app-deck-header
     [name]="text.mainDeck"
-    [total]="mainDeck.length"
-  ></app-deck-header>
+    [total]="mainDeck().length"
+  />
 
   <app-card-list
     cdkDropList
-    [cards]="mainDeck"
-    [cdkDropListData]="mainDeck"
+    [cards]="mainDeck()"
+    [cdkDropListData]="mainDeck()"
     (cdkDropListDropped)="drop($event)"
-  ></app-card-list>
+  />
 </div>
 
-<div *ngIf="extraDeck" class="deck">
+<div class="deck">
   <app-deck-header
     [name]="text.extraDeck"
-    [total]="extraDeck.length"
-  ></app-deck-header>
+    [total]="extraDeck().length"
+  />
 
   <app-card-list
     cdkDropList
-    [cards]="extraDeck"
-    [cdkDropListData]="extraDeck"
+    [cards]="extraDeck()"
+    [cdkDropListData]="extraDeck()"
     (cdkDropListDropped)="drop($event)"
-  ></app-card-list>
+  />
 </div>

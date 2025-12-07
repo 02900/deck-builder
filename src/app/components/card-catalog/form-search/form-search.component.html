@@ -2,32 +2,32 @@
   <div class="form-element">
     <select formControlName="category">
       <option selected value>{{ texts.category }}</option>
-      <option *ngFor="let category of categories" [value]="category.value">
-        {{ category.text }}
-      </option>
+      @for (category of categories; track category.value) {
+        <option [value]="category.value">{{ category.text }}</option>
+      }
     </select>
 
     <select formControlName="type">
       <option selected value>{{ texts.type }}</option>
-      <option *ngFor="let type of currentType" [value]="type.value">
-        {{ type.text }}
-      </option>
+      @for (type of currentType(); track type.value) {
+        <option [value]="type.value">{{ type.text }}</option>
+      }
     </select>
   </div>
 
   <div class="form-element">
     <select formControlName="attribute">
       <option selected value>{{ texts.attribute }}</option>
-      <option *ngFor="let attribute of attributes" [value]="attribute.value">
-        {{ attribute.text }}
-      </option>
+      @for (attribute of attributes; track attribute.value) {
+        <option [value]="attribute.value">{{ attribute.text }}</option>
+      }
     </select>
 
     <select formControlName="race">
       <option selected value>{{ texts.race }}</option>
-      <option *ngFor="let race of races" [value]="race.value">
-        {{ race.text }}
-      </option>
+      @for (race of races; track race.value) {
+        <option [value]="race.value">{{ race.text }}</option>
+      }
     </select>
   </div>
 

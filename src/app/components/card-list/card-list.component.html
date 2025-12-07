@@ -1,5 +1,7 @@
 <ul>
-  <li cdkDrag *ngFor="let card of cards">
-    <app-card [card]="card" [selectableCard]="true"></app-card>
-  </li>
+  @for (card of cards(); track card.id) {
+    <li cdkDrag>
+      <app-card [card]="card" [selectableCard]="true" />
+    </li>
+  }
 </ul>

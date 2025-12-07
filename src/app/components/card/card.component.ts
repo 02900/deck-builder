@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { CardSelectedService } from '@services/card-selected/card-selected.service';
 import { Card } from '@classes/card/';
 
@@ -7,15 +7,14 @@ import { Card } from '@classes/card/';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
 })
 export class CardComponent {
-  @Input() card!: Card;
-  @Input() selectableCard!: boolean;
+  private readonly cardSelected = inject(CardSelectedService);
 
-  constructor(private readonly cardSelected: CardSelectedService) { }
+  readonly card = input.required<Card>();
+  readonly selectableCard = input(false);
 
-  updateCardSelected() {
-    this.cardSelected.current.next(this.card);
+  updateCardSelected(): void {
+    this.cardSelected.select(this.card());
   }
 }

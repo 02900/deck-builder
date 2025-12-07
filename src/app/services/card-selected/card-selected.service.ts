@@ -1,10 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 import { Card } from '@classes/card';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardSelectedService {
-  current = new Subject<Card>();
+  readonly current = signal<Card | null>(null);
+
+  select(card: Card): void {
+    this.current.set(card);
+  }
 }

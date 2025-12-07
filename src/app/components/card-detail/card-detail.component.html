@@ -1,50 +1,35 @@
-<ng-container *ngIf="cardSelected.current | async as card; else defaultCard">
-  <ng-template
-    *ngTemplateOutlet="detail; context: { card: card }"
-  ></ng-template>
-</ng-container>
+@let currentCard = card();
 
-<ng-template #defaultCard>
-  <ng-template
-    *ngTemplateOutlet="detail; context: { card: darkMagician }"
-  ></ng-template>
-</ng-template>
+<div class="header">
+  <p>{{ currentCard.name | uppercase }}</p>
+</div>
 
-<ng-template #detail let-card="card">
-  <div class="header">
-    <p>{{ card.name | uppercase }}</p>
+<div class="summary">
+  <app-card [card]="currentCard" />
+
+  <div class="bullets">
+    @for (property of [
+      { label: label.id, value: currentCard.id },
+      { label: label.type, value: currentCard.type | uppercase },
+      { label: label.race, value: currentCard.race | uppercase },
+      { label: label.attribute, value: currentCard.attribute | uppercase },
+      { label: label.level, value: currentCard.level },
+      { label: label.atk, value: currentCard.atk },
+      { label: label.def, value: currentCard.def },
+      { label: label.linkval, value: currentCard.linkval },
+      { label: label.ban, value: currentCard.banlist_info?.ban_goat }
+    ]; track property.label) {
+      @if (property.value) {
+        <app-item-pair-value
+          [key]="property.label"
+          [value]="property.value"
+          justify-content="space-between"
+        />
+      }
+    }
   </div>
+</div>
 
-  <div class="summary">
-    <app-card [card]="card"></app-card>
-
-    <div class="bullets">
-      <ng-container
-        *ngIf="[
-          { label: label.id, value: card.id },
-          { label: label.type, value: card.type | uppercase },
-          { label: label.race, value: card.race | uppercase },
-          { label: label.attribute, value: card.attribute | uppercase },
-          { label: label.level, value: card.level },
-          { label: label.atk, value: card.atk },
-          { label: label.def, value: card.def },
-          { label: label.linkval, value: card.linkval },
-          { label: label.ban, value: card.banlist_info?.ban_goat }
-        ] as cardProperties"
-      >
-        <ng-container *ngFor="let property of cardProperties">
-          <app-item-pair-value
-            *ngIf="property.value"
-            [key]="property.label"
-            [value]="property.value"
-            justify-content="space-between"
-          ></app-item-pair-value>
-        </ng-container>
-      </ng-container>
-    </div>
-  </div>
-
-  <div class="description">
-    <p>{{ card.desc }}</p>
-  </div>
-</ng-template>
+<div class="description">
+  <p>{{ currentCard.desc }}</p>
+</div>

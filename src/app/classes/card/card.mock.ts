@@ -1,7 +1,7 @@
-import { Card } from '.';
-import { ICard } from './card.interface';
+import { Card } from './card';
+import type { ICard } from './card.interface';
 
-export const darkMagician: ICard = {
+const darkMagicianData: ICard = {
   id: 46986421,
   name: 'Dark Magician',
   type: 'Normal Monster',
@@ -79,7 +79,9 @@ export const darkMagician: ICard = {
   ],
 };
 
-export const mirrorForce: ICard = {
+export const darkMagician = new Card(darkMagicianData);
+
+const mirrorForceData: ICard = {
   id: 44095762,
   name: 'Mirror Force',
   type: 'Trap Card',
@@ -99,7 +101,9 @@ export const mirrorForce: ICard = {
   },
 };
 
-export const darkHole: ICard = {
+export const mirrorForce = new Card(mirrorForceData);
+
+const darkHoleData: ICard = {
   id: 53129443,
   name: 'Dark Hole',
   type: 'Spell Card',
@@ -119,3 +123,5 @@ export const darkHole: ICard = {
     ban_goat: 'Banned',
   },
 };
+
+export const darkHole = new Card(darkHoleData);
