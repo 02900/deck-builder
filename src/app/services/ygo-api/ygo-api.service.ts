@@ -86,4 +86,22 @@ export class YgoApiService {
         ({ id }, i, arr) => arr.findIndex((subj) => subj.id === id) === i
       );
   }
+
+  getCardsByIds(ids: number[]): Observable<Card[]> {
+    if (ids.length === 0) return of([]);
+
+    // Remove duplicates and create comma-separated string
+    const uniqueIds = [...new Set(ids)];
+    const params = new HttpParams().set('id', uniqueIds.join(','));
+
+    return this.http.get<IQueryResult | undefined>(this.API_URL, { params }).pipe(
+      catchError(() => of(undefined)),
+      map((results?: IQueryResult) => {
+        if (results) {
+          return results.data.map((card) => new Card(card));
+        }
+        return [];
+      })
+    );
+  }
 }
