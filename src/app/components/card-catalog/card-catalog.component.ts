@@ -9,6 +9,7 @@ import { Card } from '@classes/card';
   templateUrl: './card-catalog.component.html',
   styleUrls: ['./card-catalog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CardCatalogComponent {
   cards$?: Observable<Card[]>;

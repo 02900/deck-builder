@@ -6,6 +6,7 @@ import { label } from './deck-header.constant';
   templateUrl: './deck-header.component.html',
   styleUrls: ['./deck-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class DeckHeaderComponent {
   @Input() icon!: string;

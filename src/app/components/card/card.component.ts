@@ -7,6 +7,7 @@ import { Card } from '@classes/card/';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CardComponent {
   @Input() card!: Card;

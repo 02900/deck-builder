@@ -5,6 +5,7 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
   templateUrl: './item-pair-value.component.html',
   styleUrls: ['./item-pair-value.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ItemPairValueComponent {
   @Input() key?: string | number;

@@ -8,6 +8,7 @@ import { text } from './deck-viewer.constant';
   templateUrl: './deck-viewer.component.html',
   styleUrls: ['./deck-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class DeckViewerComponent {
   readonly text = text;

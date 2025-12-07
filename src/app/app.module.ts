@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CardDetailModule } from '@components/card-detail/card-detail.module';
 import { DeckViewerModule } from '@components/deck-viewer/deck-viewer.module';
@@ -11,13 +11,12 @@ import { AppComponent } from './app.component';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    HttpClientModule,
     DragDropModule,
     CardDetailModule,
     DeckViewerModule,
     CardCatalogModule,
   ],
-  providers: [],
+  providers: [provideHttpClient(withFetch())],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

@@ -8,6 +8,7 @@ import { label } from './card-detail.constans';
   templateUrl: './card-detail.component.html',
   styleUrls: ['./card-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CardDetailComponent {
   readonly label = label;
