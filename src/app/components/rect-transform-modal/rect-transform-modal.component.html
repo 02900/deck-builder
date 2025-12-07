@@ -1,0 +1,74 @@
+<!-- Unity-style Anchor Presets Modal -->
+<div class="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]" 
+     (click)="onCancel()"
+     (keydown.shift)="shiftPressed.set(true)"
+     (keyup.shift)="shiftPressed.set(false)"
+     (keydown.alt)="altPressed.set(true)"
+     (keyup.alt)="altPressed.set(false)">
+  <div class="bg-[#2a2a2a] rounded-xl p-5 shadow-2xl border border-gray-700" 
+       (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-white">{{ elementName() }} - Anchor Presets</h2>
+      <button (click)="onCancel()" class="text-gray-400 hover:text-white transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Modifier Keys Info -->
+    <div class="text-xs text-gray-400 mb-3 flex gap-4">
+      <span [ngClass]="{'text-cyan-400 font-bold': shiftPressed()}">
+        <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-[10px]">Shift</kbd> Also set pivot
+      </span>
+      <span [ngClass]="{'text-amber-400 font-bold': altPressed()}">
+        <kbd class="px-1.5 py-0.5 bg-gray-700 rounded text-[10px]">Alt</kbd> Also set position
+      </span>
+    </div>
+    
+    <!-- Unity-style Anchor Grid -->
+    <div class="bg-[#1a1a1a] p-3 rounded-lg">
+      <div class="grid grid-cols-3 gap-1">
+        @for (preset of gridPresets; track preset.anchor) {
+          <button 
+            class="w-14 h-14 flex items-center justify-center rounded border-2 transition-all relative"
+            [ngClass]="{
+              'border-cyan-500 bg-cyan-500/20': isCurrentAnchor(preset.anchor),
+              'border-gray-600 bg-[#2a2a2a] hover:border-gray-500 hover:bg-[#3a3a3a]': !isCurrentAnchor(preset.anchor)
+            }"
+            (click)="selectPreset(preset)"
+            [title]="preset.anchor"
+          >
+            <!-- Anchor visualization box -->
+            <div class="w-8 h-8 border border-gray-500 relative">
+              <!-- Anchor point indicator -->
+              <div class="absolute w-2 h-2 bg-cyan-400 rounded-full transform -translate-x-1/2 -translate-y-1/2"
+                   [style.left.%]="preset.pivotX * 100"
+                   [style.top.%]="preset.pivotY * 100">
+              </div>
+              <!-- Pivot indicator (yellow dot) when shift is pressed -->
+              @if (shiftPressed()) {
+                <div class="absolute w-1.5 h-1.5 bg-amber-400 rounded-full transform -translate-x-1/2 -translate-y-1/2 ring-1 ring-amber-300"
+                     [style.left.%]="preset.pivotX * 100"
+                     [style.top.%]="preset.pivotY * 100">
+                </div>
+              }
+            </div>
+          </button>
+        }
+      </div>
+    </div>
+    
+    <!-- Current Values Display -->
+    <div class="mt-3 flex justify-center gap-6 text-xs">
+      <div class="text-gray-400">
+        <span class="text-cyan-400 font-semibold">Anchor:</span> {{ config.anchor }}
+      </div>
+      <div class="text-gray-400">
+        <span class="text-amber-400 font-semibold">Pivot:</span> {{ config.pivot.x | number:'1.1-1' }}, {{ config.pivot.y | number:'1.1-1' }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -10,17 +10,18 @@ import {
   signal, 
   viewChild
 } from '@angular/core';
-import { DecimalPipe, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Card } from '@classes/card';
 import { AnimeCardGeneratorService } from '@services/anime-card-generator/anime-card-generator.service';
-import { AnimeCardConfig } from '@services/anime-card-generator/anime-card-config';
+import { AnimeCardConfig, calculateRect, getAnchorValues, RectTransform, StarsConfig } from '@services/anime-card-generator/anime-card-config';
+import { RectTransformModalComponent } from '../rect-transform-modal/rect-transform-modal.component';
 
 @Component({
   selector: 'app-anime-card-modal',
   templateUrl: './anime-card-modal.component.html',
   styleUrls: ['./anime-card-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, NgClass],
+  imports: [NgClass, RectTransformModalComponent],
 })
 export class AnimeCardModalComponent implements AfterViewInit {
   private readonly animeCardGenerator = inject(AnimeCardGeneratorService);
@@ -51,6 +52,10 @@ export class AnimeCardModalComponent implements AfterViewInit {
   // Signal to track if currently dragging (for showing distance guides)
   readonly isDraggingSignal = signal(false);
   
+  // RectTransform modal state
+  readonly showRectModal = signal(false);
+  readonly rectModalElement = signal<keyof AnimeCardConfig | null>(null);
+  
   // Computed distance guides for Figma-style indicators
   readonly distanceGuides = computed(() => {
     const selected = this.selectedElement();
@@ -58,33 +63,31 @@ export class AnimeCardModalComponent implements AfterViewInit {
     if (!selected || selected === 'fontSize' || !canvas) return null;
     
     const cfg = this.config();
-    const element = cfg[selected] as { x?: number; y?: number; w?: number; h?: number; size?: number };
-    if (!element) return null;
-    
     const canvasWidth = canvas.offsetWidth;
     const canvasHeight = canvas.offsetHeight;
     
-    let x: number, y: number, w: number, h: number;
+    let rect: { x: number; y: number; w: number; h: number };
     
     if (selected === 'stars') {
-      x = 0.1;
-      y = element.y ?? 0;
-      w = 0.8;
-      h = element.size ?? 0.04;
+      const stars = cfg.stars;
+      const starSize = stars.size * canvasWidth;
+      const anchorPos = getAnchorValues(stars.anchor);
+      rect = {
+        x: anchorPos.x * canvasWidth + stars.x * canvasWidth - stars.pivot.x * starSize * 4,
+        y: anchorPos.y * canvasHeight + stars.y * canvasHeight - stars.pivot.y * starSize,
+        w: starSize * 4,
+        h: starSize
+      };
     } else {
-      x = element.x ?? 0;
-      y = element.y ?? 0;
-      w = element.w ?? 0.1;
-      h = element.h ?? 0.1;
+      const element = cfg[selected] as RectTransform;
+      rect = calculateRect(element, canvasWidth, canvasHeight);
     }
     
     // Calculate distances in pixels
-    const top = y * canvasHeight;
-    const left = x * canvasWidth;
-    const right = (1 - x - w) * canvasWidth;
-    const bottom = (1 - y - h) * canvasHeight;
-    const width = w * canvasWidth;
-    const height = h * canvasHeight;
+    const top = rect.y;
+    const left = rect.x;
+    const right = canvasWidth - rect.x - rect.w;
+    const bottom = canvasHeight - rect.y - rect.h;
     
     return {
       top: Math.round(top),
@@ -93,14 +96,14 @@ export class AnimeCardModalComponent implements AfterViewInit {
       bottom: Math.round(bottom),
       // Positions for the guide lines
       topLineY: top / 2,
-      bottomLineY: top + height + bottom / 2,
+      bottomLineY: rect.y + rect.h + bottom / 2,
       leftLineX: left / 2,
-      rightLineX: left + width + right / 2,
+      rightLineX: rect.x + rect.w + right / 2,
       // Element bounds
-      elementTop: top,
-      elementLeft: left,
-      elementWidth: width,
-      elementHeight: height,
+      elementTop: rect.y,
+      elementLeft: rect.x,
+      elementWidth: rect.w,
+      elementHeight: rect.h,
       canvasWidth,
       canvasHeight
     };
@@ -113,41 +116,32 @@ export class AnimeCardModalComponent implements AfterViewInit {
     if (!selected || selected === 'fontSize' || !canvas) return null;
     
     const cfg = this.config();
-    const element = cfg[selected] as { x?: number; y?: number; w?: number; h?: number; size?: number; gap?: number };
-    
-    if (!element) return null;
-    
-    // Get canvas rendered dimensions
     const canvasWidth = canvas.offsetWidth;
     const canvasHeight = canvas.offsetHeight;
     
+    let rect: { x: number; y: number; w: number; h: number };
+    
     // Handle different element types
     if (selected === 'stars') {
-      // Stars only have y, size, gap - show a horizontal band
-      const top = (element.y ?? 0) * canvasHeight;
-      const left = 0.1 * canvasWidth;
-      const width = 0.8 * canvasWidth;
-      const height = (element.size ?? 0.04) * canvasHeight;
-      
-      return {
-        top: `${top}px`,
-        left: `${left}px`,
-        width: `${width}px`,
-        height: `${height}px`
+      const stars = cfg.stars;
+      const starSize = stars.size * canvasWidth;
+      const anchorPos = getAnchorValues(stars.anchor);
+      rect = {
+        x: anchorPos.x * canvasWidth + stars.x * canvasWidth - stars.pivot.x * starSize * 4,
+        y: anchorPos.y * canvasHeight + stars.y * canvasHeight - stars.pivot.y * starSize,
+        w: starSize * 4,
+        h: starSize
       };
+    } else {
+      const element = cfg[selected] as RectTransform;
+      rect = calculateRect(element, canvasWidth, canvasHeight);
     }
     
-    // For elements with x, y, w, h
-    const top = (element.y ?? 0) * canvasHeight;
-    const left = (element.x ?? 0) * canvasWidth;
-    const width = (element.w ?? 0.1) * canvasWidth;
-    const height = (element.h ?? 0.1) * canvasHeight;
-    
     return {
-      top: `${top}px`,
-      left: `${left}px`,
-      width: `${width}px`,
-      height: `${height}px`
+      top: `${rect.y}px`,
+      left: `${rect.x}px`,
+      width: `${rect.w}px`,
+      height: `${rect.h}px`
     };
   });
 
@@ -195,7 +189,8 @@ export class AnimeCardModalComponent implements AfterViewInit {
     if (section === 'fontSize') {
       this.animeCardGenerator.config.set({ ...current, fontSize: value });
     } else {
-      const sectionData = current[section] as Record<string, number>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sectionData = (current as any)[section];
       this.animeCardGenerator.config.set({
         ...current,
         [section]: { ...sectionData, [key]: value }
@@ -234,6 +229,40 @@ export class AnimeCardModalComponent implements AfterViewInit {
 
   closeModal(): void {
     this.close.emit();
+  }
+
+  // === RECT TRANSFORM MODAL ===
+  
+  openRectModal(element: keyof AnimeCardConfig): void {
+    if (element === 'fontSize') return;
+    this.rectModalElement.set(element);
+    this.showRectModal.set(true);
+  }
+  
+  closeRectModal(): void {
+    this.showRectModal.set(false);
+    this.rectModalElement.set(null);
+  }
+  
+  saveRectConfig(newConfig: RectTransform | StarsConfig): void {
+    const element = this.rectModalElement();
+    if (!element || element === 'fontSize') return;
+    
+    const current = this.config();
+    this.animeCardGenerator.config.set({
+      ...current,
+      [element]: newConfig
+    });
+    this.generateCard();
+  }
+  
+  isStarsElement(element: keyof AnimeCardConfig | null): boolean {
+    return element === 'stars';
+  }
+  
+  getElementConfig(element: keyof AnimeCardConfig | null): RectTransform | StarsConfig | null {
+    if (!element || element === 'fontSize') return null;
+    return this.config()[element] as RectTransform | StarsConfig;
   }
 
   // === DRAG & DROP HANDLERS ===

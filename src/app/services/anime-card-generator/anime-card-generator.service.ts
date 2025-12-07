@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Card } from '@classes/card';
-import { AnimeCardConfig, DEFAULT_ANIME_CARD_CONFIG, getConfigForCardType } from './anime-card-config';
+import { AnimeCardConfig, DEFAULT_ANIME_CARD_CONFIG, getConfigForCardType, calculateRect, getAnchorValues } from './anime-card-config';
 
 export interface AnimeCardStyle {
   backgroundColor: string;
@@ -178,119 +178,145 @@ export class AnimeCardGeneratorService {
     const ctx = canvas.getContext('2d')!;
     ctx.scale(2, 2);
 
-    // === STEP 1: Draw artwork CLIPPED to artwork area ===
-    const artX = W * cfg.artwork.x;
-    const artY = H * cfg.artwork.y;
-    const artW = W * cfg.artwork.w;
-    const artH = H * cfg.artwork.h;
-    
-    try {
-      const artworkUrl = card.card_images[0].image_url_cropped;
-      const img = await this.preloadImage(artworkUrl);
-      
-      // Clip to artwork area
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(artX, artY, artW, artH);
-      ctx.clip();
-      
-      // Cover fit: image is 1:1, target area is ~278:263 (wider than tall)
-      // We need to scale to cover and center
-      const imgRatio = img.width / img.height; // 1:1 = 1
-      const areaRatio = artW / artH; // ~278:263 > 1
-      let drawW, drawH, drawX, drawY;
-      
-      if (imgRatio > areaRatio) {
-        // Image is wider than area - fit height, crop width
-        drawH = artH;
-        drawW = artH * imgRatio;
-        drawX = artX - (drawW - artW) / 2;
-        drawY = artY;
-      } else {
-        // Image is taller than area (or equal) - fit width, crop height
-        drawW = artW;
-        drawH = artW / imgRatio;
-        drawX = artX;
-        drawY = artY - (drawH - artH) / 2;
+    // Define render layers with their z-index
+    type RenderLayer = { name: string; zIndex: number; render: () => Promise<void> };
+    const layers: RenderLayer[] = [];
+
+    // Artwork layer
+    layers.push({
+      name: 'artwork',
+      zIndex: cfg.artwork.zIndex,
+      render: async () => {
+        const artRect = calculateRect(cfg.artwork, W, H);
+        try {
+          const artworkUrl = card.card_images[0].image_url_cropped;
+          const img = await this.preloadImage(artworkUrl);
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(artRect.x, artRect.y, artRect.w, artRect.h);
+          ctx.clip();
+          const imgRatio = img.width / img.height;
+          const areaRatio = artRect.w / artRect.h;
+          let drawW, drawH, drawX, drawY;
+          if (imgRatio > areaRatio) {
+            drawH = artRect.h;
+            drawW = artRect.h * imgRatio;
+            drawX = artRect.x - (drawW - artRect.w) / 2;
+            drawY = artRect.y;
+          } else {
+            drawW = artRect.w;
+            drawH = artRect.w / imgRatio;
+            drawX = artRect.x;
+            drawY = artRect.y - (drawH - artRect.h) / 2;
+          }
+          ctx.drawImage(img, drawX, drawY, drawW, drawH);
+          ctx.restore();
+        } catch (e) {
+          console.error('Failed to load artwork:', e);
+          ctx.fillStyle = '#333';
+          ctx.fillRect(artRect.x, artRect.y, artRect.w, artRect.h);
+        }
       }
-      
-      ctx.drawImage(img, drawX, drawY, drawW, drawH);
-      ctx.restore();
-    } catch (e) {
-      console.error('Failed to load artwork:', e);
-      ctx.fillStyle = '#333';
-      ctx.fillRect(artX, artY, artW, artH);
-    }
+    });
 
-    // === STEP 2: Draw layout frame on top (configurable position/size) ===
-    try {
-      const layoutUrl = this.getLayoutAssetUrl(card);
-      const layoutImg = await this.preloadImage(layoutUrl);
-      const layoutX = W * cfg.layout.x;
-      const layoutY = H * cfg.layout.y;
-      const layoutW = W * cfg.layout.w;
-      const layoutH = H * cfg.layout.h;
-      ctx.drawImage(layoutImg, layoutX, layoutY, layoutW, layoutH);
-    } catch (e) {
-      console.error('Failed to load layout:', e);
-    }
+    // Layout frame layer
+    layers.push({
+      name: 'layout',
+      zIndex: cfg.layout.zIndex,
+      render: async () => {
+        try {
+          const layoutUrl = this.getLayoutAssetUrl(card);
+          const layoutImg = await this.preloadImage(layoutUrl);
+          const layoutRect = calculateRect(cfg.layout, W, H);
+          ctx.drawImage(layoutImg, layoutRect.x, layoutRect.y, layoutRect.w, layoutRect.h);
+        } catch (e) {
+          console.error('Failed to load layout:', e);
+        }
+      }
+    });
 
-    // === STEP 3: LEVEL STARS ===
+    // Stars layer (only for monsters)
     if (style.isMonster && card.level) {
-      const starsY = H * cfg.stars.y;
-      const starSize = W * cfg.stars.size;
-      const gap = W * cfg.stars.gap;
-      const totalStarsWidth = card.level * starSize + (card.level - 1) * gap;
-      const starsStartX = (W - totalStarsWidth) / 2;
-      
-      try {
-        const levelImg = await this.preloadImage(this.getLevelAssetUrl());
-        for (let i = 0; i < card.level; i++) {
-          const starX = starsStartX + i * (starSize + gap);
-          ctx.drawImage(levelImg, starX, starsY, starSize, starSize);
+      layers.push({
+        name: 'stars',
+        zIndex: cfg.stars.zIndex,
+        render: async () => {
+          const starSize = W * cfg.stars.size;
+          const gap = W * cfg.stars.gap;
+          const totalStarsWidth = card.level! * starSize + (card.level! - 1) * gap;
+          const anchorPos = getAnchorValues(cfg.stars.anchor);
+          const anchorX = anchorPos.x * W;
+          const anchorY = anchorPos.y * H;
+          const starsX = anchorX + (cfg.stars.x * W) - (cfg.stars.pivot.x * totalStarsWidth);
+          const starsY = anchorY + (cfg.stars.y * H) - (cfg.stars.pivot.y * starSize);
+          try {
+            const levelImg = await this.preloadImage(this.getLevelAssetUrl());
+            for (let i = 0; i < card.level!; i++) {
+              const starX = starsX + i * (starSize + gap);
+              ctx.drawImage(levelImg, starX, starsY, starSize, starSize);
+            }
+          } catch (e) {
+            for (let i = 0; i < card.level!; i++) {
+              const starX = starsX + i * (starSize + gap);
+              this.drawStar(ctx, starX + starSize/2, starsY + starSize/2, starSize/2);
+            }
+          }
         }
-      } catch (e) {
-        // Fallback to drawn stars
-        for (let i = 0; i < card.level; i++) {
-          const starX = starsStartX + i * (starSize + gap);
-          this.drawStar(ctx, starX + starSize/2, starsY + starSize/2, starSize/2);
-        }
-      }
+      });
     }
 
-    // === STEP 4: ATTRIBUTE ICON ===
+    // Attribute icon layer
     const attrUrl = this.getAttributeAssetUrl(card);
     if (attrUrl) {
-      try {
-        const attrImg = await this.preloadImage(attrUrl);
-        const attrW = W * cfg.attribute.w;
-        const attrH = H * cfg.attribute.h;
-        const attrX = W * cfg.attribute.x;
-        const attrY = H * cfg.attribute.y;
-        ctx.drawImage(attrImg, attrX, attrY, attrW, attrH);
-      } catch (e) {
-        console.error('Failed to load attribute icon:', e);
-      }
+      layers.push({
+        name: 'attribute',
+        zIndex: cfg.attribute.zIndex,
+        render: async () => {
+          try {
+            const attrImg = await this.preloadImage(attrUrl!);
+            const attrRect = calculateRect(cfg.attribute, W, H);
+            ctx.drawImage(attrImg, attrRect.x, attrRect.y, attrRect.w, attrRect.h);
+          } catch (e) {
+            console.error('Failed to load attribute icon:', e);
+          }
+        }
+      });
     }
 
-    // === STEP 5: ATK/DEF VALUES ===
+    // ATK layer (only for monsters)
     if (style.isMonster) {
-      const atkBoxX = W * cfg.atk.x;
-      const atkBoxY = H * cfg.atk.y;
-      const atkBoxW = W * cfg.atk.w;
-      const atkBoxH = H * cfg.atk.h;
-      
-      ctx.fillStyle = '#000';
-      ctx.font = `bold ${Math.round(H * cfg.fontSize)}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(String(card.atk ?? '?'), atkBoxX + atkBoxW/2, atkBoxY + atkBoxH/2);
+      layers.push({
+        name: 'atk',
+        zIndex: cfg.atk.zIndex,
+        render: async () => {
+          const atkRect = calculateRect(cfg.atk, W, H);
+          ctx.fillStyle = '#000';
+          ctx.font = `bold ${Math.round(H * cfg.fontSize)}px serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(String(card.atk ?? '?'), atkRect.x + atkRect.w/2, atkRect.y + atkRect.h/2);
+        }
+      });
 
-      const defBoxX = W * cfg.def.x;
-      const defBoxW = W * cfg.def.w;
-      const defBoxY = H * cfg.def.y;
-      const defBoxH = H * cfg.def.h;
-      ctx.fillText(String(card.def ?? '?'), defBoxX + defBoxW/2, defBoxY + defBoxH/2);
+      // DEF layer
+      layers.push({
+        name: 'def',
+        zIndex: cfg.def.zIndex,
+        render: async () => {
+          const defRect = calculateRect(cfg.def, W, H);
+          ctx.fillStyle = '#000';
+          ctx.font = `bold ${Math.round(H * cfg.fontSize)}px serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(String(card.def ?? '?'), defRect.x + defRect.w/2, defRect.y + defRect.h/2);
+        }
+      });
+    }
+
+    // Sort layers by z-index and render in order
+    layers.sort((a, b) => a.zIndex - b.zIndex);
+    for (const layer of layers) {
+      await layer.render();
     }
 
     ctx.textAlign = 'left';

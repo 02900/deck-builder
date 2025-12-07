@@ -156,32 +156,43 @@
       <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'layout'}"
            (click)="selectElement('layout')">
-        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
-            [ngClass]="{'text-cyan-400': selectedElement() === 'layout', 'text-rose-500': selectedElement() !== 'layout'}">Layout Frame</h4>
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">X</label>
-            <input type="range" min="-0.1" max="0.1" step="0.001" [value]="config().layout.x" 
-              (input)="updateConfigValue('layout', 'x', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().layout.x | number:'1.3-3' }}</span>
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold cursor-pointer transition-colors"
+              [ngClass]="{'text-cyan-400': selectedElement() === 'layout', 'text-rose-500': selectedElement() !== 'layout'}">Layout Frame</h4>
+          <button (click)="openRectModal('layout'); $event.stopPropagation()" 
+                  class="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+                  title="Edit Anchor/Pivot">⚓</button>
+        </div>
+        <div class="grid grid-cols-5 gap-1 text-xs">
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">X</label>
+            <input type="number" step="0.001" [value]="config().layout.x" 
+              (input)="updateConfigValue('layout', 'x', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">Y</label>
-            <input type="range" min="-0.1" max="0.1" step="0.001" [value]="config().layout.y" 
-              (input)="updateConfigValue('layout', 'y', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().layout.y | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">Y</label>
+            <input type="number" step="0.001" [value]="config().layout.y" 
+              (input)="updateConfigValue('layout', 'y', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">W</label>
-            <input type="range" min="0.8" max="1.2" step="0.001" [value]="config().layout.w" 
-              (input)="updateConfigValue('layout', 'w', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().layout.w | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">W</label>
+            <input type="number" step="0.001" [value]="config().layout.w" 
+              (input)="updateConfigValue('layout', 'w', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">H</label>
-            <input type="range" min="0.8" max="1.2" step="0.001" [value]="config().layout.h" 
-              (input)="updateConfigValue('layout', 'h', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().layout.h | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">H</label>
+            <input type="number" step="0.001" [value]="config().layout.h" 
+              (input)="updateConfigValue('layout', 'h', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
+          </div>
+          <div class="flex flex-col">
+            <label class="text-amber-400 text-[10px]">Z</label>
+            <input type="number" step="1" [value]="config().layout.zIndex" 
+              (input)="updateConfigValue('layout', 'zIndex', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-amber-400 focus:outline-none">
           </div>
         </div>
       </div>
@@ -190,32 +201,43 @@
       <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'artwork'}"
            (click)="selectElement('artwork')">
-        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
-            [ngClass]="{'text-cyan-400': selectedElement() === 'artwork', 'text-rose-500': selectedElement() !== 'artwork'}">Artwork</h4>
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">X</label>
-            <input type="range" min="0" max="0.2" step="0.001" [value]="config().artwork.x" 
-              (input)="updateConfigValue('artwork', 'x', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().artwork.x | number:'1.3-3' }}</span>
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold cursor-pointer transition-colors"
+              [ngClass]="{'text-cyan-400': selectedElement() === 'artwork', 'text-rose-500': selectedElement() !== 'artwork'}">Artwork</h4>
+          <button (click)="openRectModal('artwork'); $event.stopPropagation()" 
+                  class="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+                  title="Edit Anchor/Pivot">⚓</button>
+        </div>
+        <div class="grid grid-cols-5 gap-1 text-xs">
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">X</label>
+            <input type="number" step="0.001" [value]="config().artwork.x" 
+              (input)="updateConfigValue('artwork', 'x', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">Y</label>
-            <input type="range" min="0" max="0.1" step="0.001" [value]="config().artwork.y" 
-              (input)="updateConfigValue('artwork', 'y', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().artwork.y | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">Y</label>
+            <input type="number" step="0.001" [value]="config().artwork.y" 
+              (input)="updateConfigValue('artwork', 'y', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">W</label>
-            <input type="range" min="0.7" max="1" step="0.001" [value]="config().artwork.w" 
-              (input)="updateConfigValue('artwork', 'w', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().artwork.w | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">W</label>
+            <input type="number" step="0.001" [value]="config().artwork.w" 
+              (input)="updateConfigValue('artwork', 'w', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">H</label>
-            <input type="range" min="0.5" max="0.8" step="0.001" [value]="config().artwork.h" 
-              (input)="updateConfigValue('artwork', 'h', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().artwork.h | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">H</label>
+            <input type="number" step="0.001" [value]="config().artwork.h" 
+              (input)="updateConfigValue('artwork', 'h', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
+          </div>
+          <div class="flex flex-col">
+            <label class="text-amber-400 text-[10px]">Z</label>
+            <input type="number" step="1" [value]="config().artwork.zIndex" 
+              (input)="updateConfigValue('artwork', 'zIndex', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-amber-400 focus:outline-none">
           </div>
         </div>
       </div>
@@ -224,26 +246,43 @@
       <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'stars'}"
            (click)="selectElement('stars')">
-        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
-            [ngClass]="{'text-cyan-400': selectedElement() === 'stars', 'text-rose-500': selectedElement() !== 'stars'}">Stars</h4>
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">Y</label>
-            <input type="range" min="0.65" max="0.8" step="0.001" [value]="config().stars.y" 
-              (input)="updateConfigValue('stars', 'y', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().stars.y | number:'1.3-3' }}</span>
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold cursor-pointer transition-colors"
+              [ngClass]="{'text-cyan-400': selectedElement() === 'stars', 'text-rose-500': selectedElement() !== 'stars'}">Stars</h4>
+          <button (click)="openRectModal('stars'); $event.stopPropagation()" 
+                  class="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+                  title="Edit Anchor/Pivot">⚓</button>
+        </div>
+        <div class="grid grid-cols-5 gap-1 text-xs">
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">X</label>
+            <input type="number" step="0.001" [value]="config().stars.x" 
+              (input)="updateConfigValue('stars', 'x', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">Size</label>
-            <input type="range" min="0.02" max="0.06" step="0.001" [value]="config().stars.size" 
-              (input)="updateConfigValue('stars', 'size', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().stars.size | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">Y</label>
+            <input type="number" step="0.001" [value]="config().stars.y" 
+              (input)="updateConfigValue('stars', 'y', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">Gap</label>
-            <input type="range" min="0" max="0.02" step="0.001" [value]="config().stars.gap" 
-              (input)="updateConfigValue('stars', 'gap', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().stars.gap | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">Size</label>
+            <input type="number" step="0.001" [value]="config().stars.size" 
+              (input)="updateConfigValue('stars', 'size', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
+          </div>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">Gap</label>
+            <input type="number" step="0.001" [value]="config().stars.gap" 
+              (input)="updateConfigValue('stars', 'gap', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
+          </div>
+          <div class="flex flex-col">
+            <label class="text-amber-400 text-[10px]">Z</label>
+            <input type="number" step="1" [value]="config().stars.zIndex" 
+              (input)="updateConfigValue('stars', 'zIndex', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-amber-400 focus:outline-none">
           </div>
         </div>
       </div>
@@ -252,32 +291,43 @@
       <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'attribute'}"
            (click)="selectElement('attribute')">
-        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
-            [ngClass]="{'text-cyan-400': selectedElement() === 'attribute', 'text-rose-500': selectedElement() !== 'attribute'}">Attribute</h4>
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">X</label>
-            <input type="range" min="0.7" max="0.95" step="0.001" [value]="config().attribute.x" 
-              (input)="updateConfigValue('attribute', 'x', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().attribute.x | number:'1.3-3' }}</span>
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold cursor-pointer transition-colors"
+              [ngClass]="{'text-cyan-400': selectedElement() === 'attribute', 'text-rose-500': selectedElement() !== 'attribute'}">Attribute</h4>
+          <button (click)="openRectModal('attribute'); $event.stopPropagation()" 
+                  class="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+                  title="Edit Anchor/Pivot">⚓</button>
+        </div>
+        <div class="grid grid-cols-5 gap-1 text-xs">
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">X</label>
+            <input type="number" step="0.001" [value]="config().attribute.x" 
+              (input)="updateConfigValue('attribute', 'x', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">Y</label>
-            <input type="range" min="0.65" max="0.8" step="0.001" [value]="config().attribute.y" 
-              (input)="updateConfigValue('attribute', 'y', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().attribute.y | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">Y</label>
+            <input type="number" step="0.001" [value]="config().attribute.y" 
+              (input)="updateConfigValue('attribute', 'y', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">W</label>
-            <input type="range" min="0.05" max="0.15" step="0.001" [value]="config().attribute.w" 
-              (input)="updateConfigValue('attribute', 'w', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().attribute.w | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">W</label>
+            <input type="number" step="0.001" [value]="config().attribute.w" 
+              (input)="updateConfigValue('attribute', 'w', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">H</label>
-            <input type="range" min="0.03" max="0.1" step="0.001" [value]="config().attribute.h" 
-              (input)="updateConfigValue('attribute', 'h', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().attribute.h | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">H</label>
+            <input type="number" step="0.001" [value]="config().attribute.h" 
+              (input)="updateConfigValue('attribute', 'h', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
+          </div>
+          <div class="flex flex-col">
+            <label class="text-amber-400 text-[10px]">Z</label>
+            <input type="number" step="1" [value]="config().attribute.zIndex" 
+              (input)="updateConfigValue('attribute', 'zIndex', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-amber-400 focus:outline-none">
           </div>
         </div>
       </div>
@@ -286,32 +336,43 @@
       <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'atk'}"
            (click)="selectElement('atk')">
-        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
-            [ngClass]="{'text-cyan-400': selectedElement() === 'atk', 'text-rose-500': selectedElement() !== 'atk'}">ATK Box</h4>
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">X</label>
-            <input type="range" min="0" max="0.2" step="0.001" [value]="config().atk.x" 
-              (input)="updateConfigValue('atk', 'x', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().atk.x | number:'1.3-3' }}</span>
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold cursor-pointer transition-colors"
+              [ngClass]="{'text-cyan-400': selectedElement() === 'atk', 'text-rose-500': selectedElement() !== 'atk'}">ATK Box</h4>
+          <button (click)="openRectModal('atk'); $event.stopPropagation()" 
+                  class="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+                  title="Edit Anchor/Pivot">⚓</button>
+        </div>
+        <div class="grid grid-cols-5 gap-1 text-xs">
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">X</label>
+            <input type="number" step="0.001" [value]="config().atk.x" 
+              (input)="updateConfigValue('atk', 'x', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">Y</label>
-            <input type="range" min="0.75" max="0.9" step="0.001" [value]="config().atk.y" 
-              (input)="updateConfigValue('atk', 'y', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().atk.y | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">Y</label>
+            <input type="number" step="0.001" [value]="config().atk.y" 
+              (input)="updateConfigValue('atk', 'y', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">W</label>
-            <input type="range" min="0.2" max="0.5" step="0.001" [value]="config().atk.w" 
-              (input)="updateConfigValue('atk', 'w', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().atk.w | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">W</label>
+            <input type="number" step="0.001" [value]="config().atk.w" 
+              (input)="updateConfigValue('atk', 'w', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">H</label>
-            <input type="range" min="0.05" max="0.2" step="0.001" [value]="config().atk.h" 
-              (input)="updateConfigValue('atk', 'h', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().atk.h | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">H</label>
+            <input type="number" step="0.001" [value]="config().atk.h" 
+              (input)="updateConfigValue('atk', 'h', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
+          </div>
+          <div class="flex flex-col">
+            <label class="text-amber-400 text-[10px]">Z</label>
+            <input type="number" step="1" [value]="config().atk.zIndex" 
+              (input)="updateConfigValue('atk', 'zIndex', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-amber-400 focus:outline-none">
           </div>
         </div>
       </div>
@@ -320,32 +381,43 @@
       <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'def'}"
            (click)="selectElement('def')">
-        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
-            [ngClass]="{'text-cyan-400': selectedElement() === 'def', 'text-rose-500': selectedElement() !== 'def'}">DEF Box</h4>
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">X</label>
-            <input type="range" min="0.4" max="0.7" step="0.001" [value]="config().def.x" 
-              (input)="updateConfigValue('def', 'x', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().def.x | number:'1.3-3' }}</span>
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-semibold cursor-pointer transition-colors"
+              [ngClass]="{'text-cyan-400': selectedElement() === 'def', 'text-rose-500': selectedElement() !== 'def'}">DEF Box</h4>
+          <button (click)="openRectModal('def'); $event.stopPropagation()" 
+                  class="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+                  title="Edit Anchor/Pivot">⚓</button>
+        </div>
+        <div class="grid grid-cols-5 gap-1 text-xs">
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">X</label>
+            <input type="number" step="0.001" [value]="config().def.x" 
+              (input)="updateConfigValue('def', 'x', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">Y</label>
-            <input type="range" min="0.75" max="0.9" step="0.001" [value]="config().def.y" 
-              (input)="updateConfigValue('def', 'y', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().def.y | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">Y</label>
+            <input type="number" step="0.001" [value]="config().def.y" 
+              (input)="updateConfigValue('def', 'y', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">W</label>
-            <input type="range" min="0.2" max="0.5" step="0.001" [value]="config().def.w" 
-              (input)="updateConfigValue('def', 'w', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().def.w | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">W</label>
+            <input type="number" step="0.001" [value]="config().def.w" 
+              (input)="updateConfigValue('def', 'w', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 w-8">H</label>
-            <input type="range" min="0.05" max="0.2" step="0.001" [value]="config().def.h" 
-              (input)="updateConfigValue('def', 'h', $event)" class="flex-1 accent-[#e94560]">
-            <span class="text-xs text-white w-12 text-right">{{ config().def.h | number:'1.3-3' }}</span>
+          <div class="flex flex-col">
+            <label class="text-slate-400 text-[10px]">H</label>
+            <input type="number" step="0.001" [value]="config().def.h" 
+              (input)="updateConfigValue('def', 'h', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-cyan-400 focus:outline-none">
+          </div>
+          <div class="flex flex-col">
+            <label class="text-amber-400 text-[10px]">Z</label>
+            <input type="number" step="1" [value]="config().def.zIndex" 
+              (input)="updateConfigValue('def', 'zIndex', $event)" 
+              class="w-full bg-gray-800 border border-gray-600 rounded px-1 py-0.5 text-white text-xs focus:border-amber-400 focus:outline-none">
           </div>
         </div>
       </div>
@@ -355,11 +427,21 @@
         <h4 class="text-sm font-semibold text-[#e94560] mb-2">Font</h4>
         <div class="flex items-center gap-2">
           <label class="text-xs text-slate-300 w-8">Size</label>
-          <input type="range" min="0.03" max="0.1" step="0.001" [value]="config().fontSize" 
-            (input)="updateFontSize($event)" class="flex-1 accent-[#e94560]">
-          <span class="text-xs text-white w-12 text-right">{{ config().fontSize | number:'1.3-3' }}</span>
+          <input type="number" step="0.001" [value]="config().fontSize" 
+            (input)="updateFontSize($event)" 
+            class="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white text-xs focus:border-rose-400 focus:outline-none">
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Anchor/Pivot Modal -->
+@if (showRectModal() && rectModalElement()) {
+  <app-rect-transform-modal
+    [elementName]="rectModalElement()!"
+    [elementConfig]="getElementConfig(rectModalElement())!"
+    (close)="closeRectModal()"
+    (save)="saveRectConfig($event)"
+  />
+}
