@@ -7,7 +7,7 @@
       class="w-full h-auto"
       loading="lazy"
       [alt]="card().name"
-      [src]="card().card_images[0].image_url_small"
+      [src]="imageUrl()"
     />
   </button>
 } @else {
@@ -16,7 +16,7 @@
       class="w-full h-auto"
       loading="lazy"
       [alt]="card().name"
-      [src]="card().card_images[0].image_url_small"
+      [src]="imageUrl()"
     />
   </div>
 }

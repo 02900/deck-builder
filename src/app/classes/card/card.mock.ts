@@ -18,7 +18,9 @@ const darkMagicianData: ICard = {
       image_url:
         'https://storage.googleapis.com/ygoprodeck.com/pics/46986421.jpg',
       image_url_small:
-        'https://storage.googleapis.com/ygoprodeck.com/pics_small/46986421.jpg',
+        'https://images.ygoprodeck.com/images/pics_small/46986421.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/46986421.jpg',
     },
     {
       id: 46986420,
@@ -26,6 +28,8 @@ const darkMagicianData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/46986420.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/46986420.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/46986420.jpg',
     },
     {
       id: 46986414,
@@ -33,6 +37,8 @@ const darkMagicianData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/46986414.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/46986414.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/46986414.jpg',
     },
     {
       id: 46986415,
@@ -40,6 +46,8 @@ const darkMagicianData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/46986415.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/46986415.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/46986415.jpg',
     },
     {
       id: 46986416,
@@ -47,6 +55,8 @@ const darkMagicianData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/46986416.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/46986416.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/46986416.jpg',
     },
     {
       id: 46986417,
@@ -54,6 +64,8 @@ const darkMagicianData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/46986417.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/46986417.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/46986417.jpg',
     },
     {
       id: 46986418,
@@ -61,6 +73,8 @@ const darkMagicianData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/46986418.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/46986418.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/46986418.jpg',
     },
     {
       id: 46986419,
@@ -68,6 +82,8 @@ const darkMagicianData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/46986419.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/46986419.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/46986419.jpg',
     },
     {
       id: 36996508,
@@ -75,6 +91,8 @@ const darkMagicianData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/36996508.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/36996508.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/36996508.jpg',
     },
   ],
 };
@@ -94,6 +112,8 @@ const mirrorForceData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/44095762.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/44095762.jpg',
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/44095762.jpg',
     },
   ],
   banlist_info: {
@@ -117,6 +137,9 @@ const darkHoleData: ICard = {
         'https://storage.googleapis.com/ygoprodeck.com/pics/53129443.jpg',
       image_url_small:
         'https://storage.googleapis.com/ygoprodeck.com/pics_small/53129443.jpg',
+
+      image_url_cropped:
+        'https://images.ygoprodeck.com/images/cards_cropped/53129443.jpg',
     },
   ],
   banlist_info: {
