@@ -325,13 +325,14 @@ export class AnimeCardModalComponent implements AfterViewInit {
     if (selected === 'stars') {
       // Stars only support Y movement and size change
       if (this.dragType === 'move') {
-        const newY = Math.max(0, Math.min(1, this.dragStartConfig.y + deltaY));
+        // Allow negative coordinates and values > 1
+        const newY = this.dragStartConfig.y + deltaY;
         newConfig = {
           stars: { ...current.stars, y: newY }
         };
       } else if (this.dragType?.startsWith('resize')) {
-        // Resize changes star size
-        const newSize = Math.max(0.02, Math.min(0.1, this.dragStartConfig.h + deltaY));
+        // Resize changes star size (keep positive size)
+        const newSize = Math.max(0.01, this.dragStartConfig.h + deltaY);
         newConfig = {
           stars: { ...current.stars, size: newSize }
         };
@@ -339,13 +340,17 @@ export class AnimeCardModalComponent implements AfterViewInit {
     } else {
       const elementConfig = current[selected] as { x: number; y: number; w: number; h: number };
       
+      // Allow negative coordinates and values > 1
+      // Keep minimum width/height to prevent element disappearing
+      const minSize = 0.01;
+      
       switch (this.dragType) {
         case 'move':
           newConfig = {
             [selected]: {
               ...elementConfig,
-              x: Math.max(0, Math.min(1, this.dragStartConfig.x + deltaX)),
-              y: Math.max(0, Math.min(1, this.dragStartConfig.y + deltaY))
+              x: this.dragStartConfig.x + deltaX,
+              y: this.dragStartConfig.y + deltaY
             }
           };
           break;
@@ -354,8 +359,8 @@ export class AnimeCardModalComponent implements AfterViewInit {
           newConfig = {
             [selected]: {
               ...elementConfig,
-              w: Math.max(0.05, Math.min(1, this.dragStartConfig.w + deltaX)),
-              h: Math.max(0.05, Math.min(1, this.dragStartConfig.h + deltaY))
+              w: Math.max(minSize, this.dragStartConfig.w + deltaX),
+              h: Math.max(minSize, this.dragStartConfig.h + deltaY)
             }
           };
           break;
@@ -364,9 +369,9 @@ export class AnimeCardModalComponent implements AfterViewInit {
           newConfig = {
             [selected]: {
               ...elementConfig,
-              x: Math.max(0, Math.min(1, this.dragStartConfig.x + deltaX)),
-              w: Math.max(0.05, Math.min(1, this.dragStartConfig.w - deltaX)),
-              h: Math.max(0.05, Math.min(1, this.dragStartConfig.h + deltaY))
+              x: this.dragStartConfig.x + deltaX,
+              w: Math.max(minSize, this.dragStartConfig.w - deltaX),
+              h: Math.max(minSize, this.dragStartConfig.h + deltaY)
             }
           };
           break;
@@ -375,9 +380,9 @@ export class AnimeCardModalComponent implements AfterViewInit {
           newConfig = {
             [selected]: {
               ...elementConfig,
-              y: Math.max(0, Math.min(1, this.dragStartConfig.y + deltaY)),
-              w: Math.max(0.05, Math.min(1, this.dragStartConfig.w + deltaX)),
-              h: Math.max(0.05, Math.min(1, this.dragStartConfig.h - deltaY))
+              y: this.dragStartConfig.y + deltaY,
+              w: Math.max(minSize, this.dragStartConfig.w + deltaX),
+              h: Math.max(minSize, this.dragStartConfig.h - deltaY)
             }
           };
           break;
@@ -386,10 +391,10 @@ export class AnimeCardModalComponent implements AfterViewInit {
           newConfig = {
             [selected]: {
               ...elementConfig,
-              x: Math.max(0, Math.min(1, this.dragStartConfig.x + deltaX)),
-              y: Math.max(0, Math.min(1, this.dragStartConfig.y + deltaY)),
-              w: Math.max(0.05, Math.min(1, this.dragStartConfig.w - deltaX)),
-              h: Math.max(0.05, Math.min(1, this.dragStartConfig.h - deltaY))
+              x: this.dragStartConfig.x + deltaX,
+              y: this.dragStartConfig.y + deltaY,
+              w: Math.max(minSize, this.dragStartConfig.w - deltaX),
+              h: Math.max(minSize, this.dragStartConfig.h - deltaY)
             }
           };
           break;
