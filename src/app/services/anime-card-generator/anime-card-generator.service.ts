@@ -275,7 +275,9 @@ export class AnimeCardGeneratorService {
 
       const defBoxX = W * cfg.def.x;
       const defBoxW = W * cfg.def.w;
-      ctx.fillText(String(card.def ?? '?'), defBoxX + defBoxW/2, atkBoxY + atkBoxH/2);
+      const defBoxY = H * cfg.def.y;
+      const defBoxH = H * cfg.def.h;
+      ctx.fillText(String(card.def ?? '?'), defBoxX + defBoxW/2, defBoxY + defBoxH/2);
     }
 
     ctx.textAlign = 'left';
