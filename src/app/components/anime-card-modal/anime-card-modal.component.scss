@@ -1,0 +1,132 @@
+:host {
+  display: block;
+}
+
+.anime-card {
+  width: 420px;
+  height: 610px;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 3px solid rgba(0, 0, 0, 0.3);
+  font-family: 'Arial', sans-serif;
+}
+
+.card-header {
+  margin-bottom: 8px;
+}
+
+.card-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.card-stars {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  padding: 2px 0;
+}
+
+.star {
+  color: #ffd700;
+  font-size: 18px;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.card-artwork {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  margin-bottom: 8px;
+  min-height: 260px;
+}
+
+.artwork-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-type-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.card-type {
+  text-transform: uppercase;
+}
+
+.card-attribute {
+  text-transform: uppercase;
+}
+
+.card-description {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #000;
+  min-height: 80px;
+  max-height: 120px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.card-stats {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.stat-label {
+  font-size: 12px;
+}
+
+.stat-value {
+  font-size: 14px;
+}
+
+.card-id {
+  text-align: right;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: bold;
+}
