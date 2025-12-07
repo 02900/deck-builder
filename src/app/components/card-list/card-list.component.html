@@ -1,6 +1,6 @@
-<ul>
+<ul class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-2">
   @for (card of cards(); track card.id) {
-    <li cdkDrag>
+    <li cdkDrag class="card-hover-effect rounded-lg overflow-hidden cursor-grab active:cursor-grabbing">
       <app-card [card]="card" [selectableCard]="true" />
     </li>
   }

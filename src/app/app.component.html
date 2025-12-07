@@ -1,5 +1,34 @@
-<main cdkDropListGroup>
-  <app-card-detail></app-card-detail>
-  <app-deck-viewer></app-deck-viewer>
-  <app-card-catalog></app-card-catalog>
-</main>
+<div class="min-h-screen p-4 lg:p-6">
+  <!-- Header -->
+  <header class="mb-6">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#e94560] to-[#ff6b6b] flex items-center justify-center shadow-lg">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold gradient-text">YGO Deck Builder</h1>
+        <p class="text-sm text-slate-400">Build your ultimate deck</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main cdkDropListGroup class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+    <!-- Card Detail Panel -->
+    <aside class="lg:col-span-4 xl:col-span-3">
+      <app-card-detail />
+    </aside>
+
+    <!-- Deck Viewer Panel -->
+    <section class="lg:col-span-4 xl:col-span-5">
+      <app-deck-viewer />
+    </section>
+
+    <!-- Card Catalog Panel -->
+    <aside class="lg:col-span-4 xl:col-span-4">
+      <app-card-catalog />
+    </aside>
+  </main>
+</div>

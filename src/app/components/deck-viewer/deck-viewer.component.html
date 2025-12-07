@@ -1,27 +1,51 @@
-<div class="deck">
-  <app-deck-header
-    [name]="text.mainDeck"
-    [total]="mainDeck().length"
-  />
+<div class="space-y-4">
+  <!-- Main Deck -->
+  <div class="glass rounded-2xl overflow-hidden">
+    <app-deck-header
+      [name]="text.mainDeck"
+      [total]="mainDeck().length"
+      [icon]="'📦'"
+    />
+    <div class="p-3 min-h-[200px]">
+      <app-card-list
+        cdkDropList
+        [cards]="mainDeck()"
+        [cdkDropListData]="mainDeck()"
+        (cdkDropListDropped)="drop($event)"
+      />
+      @if (mainDeck().length === 0) {
+        <div class="flex flex-col items-center justify-center h-32 text-slate-500">
+          <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+          </svg>
+          <p class="text-sm">Drag cards here</p>
+        </div>
+      }
+    </div>
+  </div>
 
-  <app-card-list
-    cdkDropList
-    [cards]="mainDeck()"
-    [cdkDropListData]="mainDeck()"
-    (cdkDropListDropped)="drop($event)"
-  />
-</div>
-
-<div class="deck">
-  <app-deck-header
-    [name]="text.extraDeck"
-    [total]="extraDeck().length"
-  />
-
-  <app-card-list
-    cdkDropList
-    [cards]="extraDeck()"
-    [cdkDropListData]="extraDeck()"
-    (cdkDropListDropped)="drop($event)"
-  />
+  <!-- Extra Deck -->
+  <div class="glass rounded-2xl overflow-hidden">
+    <app-deck-header
+      [name]="text.extraDeck"
+      [total]="extraDeck().length"
+      [icon]="'✨'"
+    />
+    <div class="p-3 min-h-[150px]">
+      <app-card-list
+        cdkDropList
+        [cards]="extraDeck()"
+        [cdkDropListData]="extraDeck()"
+        (cdkDropListDropped)="drop($event)"
+      />
+      @if (extraDeck().length === 0) {
+        <div class="flex flex-col items-center justify-center h-24 text-slate-500">
+          <svg class="w-8 h-8 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+          </svg>
+          <p class="text-sm">Extra deck cards</p>
+        </div>
+      }
+    </div>
+  </div>
 </div>

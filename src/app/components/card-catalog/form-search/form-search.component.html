@@ -1,63 +1,86 @@
-<form [formGroup]="formSearch">
-  <div class="form-element">
-    <select formControlName="category">
-      <option selected value>{{ texts.category }}</option>
+<form [formGroup]="formSearch" class="space-y-3">
+  <!-- Search Input -->
+  <div class="relative">
+    <input
+      id="query"
+      type="text"
+      formControlName="query"
+      placeholder="Search cards..."
+      class="w-full px-4 py-2.5 pl-10 bg-black/30 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-[#e94560]/50 focus:ring-1 focus:ring-[#e94560]/50 transition-all"
+    />
+    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    </svg>
+  </div>
+
+  <!-- Filters Grid -->
+  <div class="grid grid-cols-2 gap-2">
+    <select formControlName="category" class="px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-[#e94560]/50 transition-all">
+      <option value="">{{ texts.category }}</option>
       @for (category of categories; track category.value) {
         <option [value]="category.value">{{ category.text }}</option>
       }
     </select>
 
-    <select formControlName="type">
-      <option selected value>{{ texts.type }}</option>
+    <select formControlName="type" class="px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-[#e94560]/50 transition-all disabled:opacity-50">
+      <option value="">{{ texts.type }}</option>
       @for (type of currentType(); track type.value) {
         <option [value]="type.value">{{ type.text }}</option>
       }
     </select>
-  </div>
 
-  <div class="form-element">
-    <select formControlName="attribute">
-      <option selected value>{{ texts.attribute }}</option>
+    <select formControlName="attribute" class="px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-[#e94560]/50 transition-all">
+      <option value="">{{ texts.attribute }}</option>
       @for (attribute of attributes; track attribute.value) {
         <option [value]="attribute.value">{{ attribute.text }}</option>
       }
     </select>
 
-    <select formControlName="race">
-      <option selected value>{{ texts.race }}</option>
+    <select formControlName="race" class="px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-[#e94560]/50 transition-all">
+      <option value="">{{ texts.race }}</option>
       @for (race of races; track race.value) {
         <option [value]="race.value">{{ race.text }}</option>
       }
     </select>
   </div>
 
-  <div class="form-element">
-    <label for="query">{{ texts.query }}</label>
-    <input id="query" type="text" formControlName="query" />
-  </div>
-
-  <div class="form-element">
-    <label for="atk">{{ texts.atk }}</label>
-    <input id="atk" type="number" formControlName="atk" />
-  </div>
-
-  <div class="form-element">
-    <label for="def">{{ texts.def }}</label>
-    <input id="def" type="number" formControlName="def" />
-  </div>
-
-  <div class="form-element">
-    <label for="level">{{ texts.level }}</label>
-    <input id="level" type="number" formControlName="level" />
-  </div>
-
-  <div class="form-element">
-    <label for="link">{{ texts.link }}</label>
-    <input id="link" type="number" formControlName="link" />
-  </div>
-
-  <div class="form-element">
-    <label for="id">{{ texts.id }}</label>
-    <input id="id" type="text" formControlName="id" />
+  <!-- Stats Filters -->
+  <div class="grid grid-cols-4 gap-2">
+    <div class="relative">
+      <input
+        id="atk"
+        type="number"
+        formControlName="atk"
+        placeholder="ATK"
+        class="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#e94560]/50 transition-all"
+      />
+    </div>
+    <div class="relative">
+      <input
+        id="def"
+        type="number"
+        formControlName="def"
+        placeholder="DEF"
+        class="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#e94560]/50 transition-all"
+      />
+    </div>
+    <div class="relative">
+      <input
+        id="level"
+        type="number"
+        formControlName="level"
+        placeholder="LVL"
+        class="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#e94560]/50 transition-all"
+      />
+    </div>
+    <div class="relative">
+      <input
+        id="id"
+        type="text"
+        formControlName="id"
+        placeholder="ID"
+        class="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#e94560]/50 transition-all"
+      />
+    </div>
   </div>
 </form>

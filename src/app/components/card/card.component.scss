@@ -1,22 +1,9 @@
 :host {
+  display: block;
   width: 100%;
-}
-
-.card {
-  width: 100%;
-  padding-bottom: 145.84%;
-  position: relative;
-
-  img {
-    position: absolute;
-    width: 100%;
-    height: auto;
-  }
 }
 
 button {
-  display: block;
   padding: 0;
-  border-width: 0;
-  text-align: initial;
+  background: none;
 }

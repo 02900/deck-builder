@@ -1,35 +1,63 @@
 @let currentCard = card();
 
-<div class="header">
-  <p>{{ currentCard.name | uppercase }}</p>
-</div>
-
-<div class="summary">
-  <app-card [card]="currentCard" />
-
-  <div class="bullets">
-    @for (property of [
-      { label: label.id, value: currentCard.id },
-      { label: label.type, value: currentCard.type | uppercase },
-      { label: label.race, value: currentCard.race | uppercase },
-      { label: label.attribute, value: currentCard.attribute | uppercase },
-      { label: label.level, value: currentCard.level },
-      { label: label.atk, value: currentCard.atk },
-      { label: label.def, value: currentCard.def },
-      { label: label.linkval, value: currentCard.linkval },
-      { label: label.ban, value: currentCard.banlist_info?.ban_goat }
-    ]; track property.label) {
-      @if (property.value) {
-        <app-item-pair-value
-          [key]="property.label"
-          [value]="property.value"
-          justify-content="space-between"
-        />
+<div class="glass rounded-2xl p-5 h-full">
+  <!-- Card Title -->
+  <div class="mb-4">
+    <h2 class="text-lg font-bold text-white truncate">{{ currentCard.name }}</h2>
+    <div class="flex items-center gap-2 mt-1">
+      <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-[#e94560]/20 text-[#ff6b6b]">
+        {{ currentCard.type }}
+      </span>
+      @if (currentCard.attribute) {
+        <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-500/20 text-blue-400">
+          {{ currentCard.attribute }}
+        </span>
       }
-    }
+    </div>
   </div>
-</div>
 
-<div class="description">
-  <p>{{ currentCard.desc }}</p>
+  <!-- Card Image & Stats -->
+  <div class="flex gap-4">
+    <div class="w-32 flex-shrink-0">
+      <app-card [card]="currentCard" />
+    </div>
+
+    <div class="flex-1 space-y-2">
+      @for (property of [
+        { label: label.race, value: currentCard.race, icon: '🎭' },
+        { label: label.level, value: currentCard.level, icon: '⭐' },
+        { label: label.atk, value: currentCard.atk, icon: '⚔️' },
+        { label: label.def, value: currentCard.def, icon: '🛡️' },
+        { label: label.linkval, value: currentCard.linkval, icon: '🔗' }
+      ]; track property.label) {
+        @if (property.value) {
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-400 flex items-center gap-1.5">
+              <span>{{ property.icon }}</span>
+              {{ property.label }}
+            </span>
+            <span class="font-semibold text-white">{{ property.value }}</span>
+          </div>
+        }
+      }
+      @if (currentCard.banlist_info?.ban_goat) {
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-slate-400">🚫 Ban Status</span>
+          <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-red-500/20 text-red-400">
+            {{ currentCard.banlist_info?.ban_goat }}
+          </span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Description -->
+  <div class="mt-4 p-3 rounded-xl bg-black/20 border border-white/5">
+    <p class="text-sm text-slate-300 leading-relaxed">{{ currentCard.desc }}</p>
+  </div>
+
+  <!-- Card ID -->
+  <div class="mt-3 text-xs text-slate-500 text-center">
+    ID: {{ currentCard.id }}
+  </div>
 </div>
