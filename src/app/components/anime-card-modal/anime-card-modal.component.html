@@ -152,6 +152,40 @@
     <div class="glass rounded-2xl p-4 flex-1 overflow-y-auto max-h-[85vh] min-w-[320px]">
       <h3 class="text-lg font-bold text-white mb-3">Layout Configuration</h3>
       
+      <!-- Layout Frame Section -->
+      <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
+           [ngClass]="{'bg-cyan-900/30': selectedElement() === 'layout'}"
+           (click)="selectElement('layout')">
+        <h4 class="text-sm font-semibold mb-2 cursor-pointer transition-colors"
+            [ngClass]="{'text-cyan-400': selectedElement() === 'layout', 'text-rose-500': selectedElement() !== 'layout'}">Layout Frame</h4>
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">X</label>
+            <input type="range" min="-0.1" max="0.1" step="0.001" [value]="config().layout.x" 
+              (input)="updateConfigValue('layout', 'x', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().layout.x | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">Y</label>
+            <input type="range" min="-0.1" max="0.1" step="0.001" [value]="config().layout.y" 
+              (input)="updateConfigValue('layout', 'y', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().layout.y | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">W</label>
+            <input type="range" min="0.8" max="1.2" step="0.001" [value]="config().layout.w" 
+              (input)="updateConfigValue('layout', 'w', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().layout.w | number:'1.3-3' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 w-8">H</label>
+            <input type="range" min="0.8" max="1.2" step="0.001" [value]="config().layout.h" 
+              (input)="updateConfigValue('layout', 'h', $event)" class="flex-1 accent-[#e94560]">
+            <span class="text-xs text-white w-12 text-right">{{ config().layout.h | number:'1.3-3' }}</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Artwork Section -->
       <div class="mb-4 p-2 -mx-2 rounded-lg transition-colors cursor-pointer"
            [ngClass]="{'bg-cyan-900/30': selectedElement() === 'artwork'}"

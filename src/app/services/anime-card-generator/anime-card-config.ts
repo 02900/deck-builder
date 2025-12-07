@@ -3,6 +3,13 @@
 // Edit these values to adjust element positioning
 
 export interface AnimeCardConfig {
+  // Layout frame overlay
+  layout: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  };
   // Artwork area (where the card image is clipped)
   artwork: {
     x: number;
@@ -46,6 +53,12 @@ export type CardConfigType = 'monster' | 'spell' | 'trap';
 
 // Monster card configuration (also used as fallback)
 export const MONSTER_CARD_CONFIG: AnimeCardConfig = {
+  layout: {
+    x: 0,
+    y: 0,
+    w: 1,
+    h: 1,
+  },
   artwork: {
     x: 0.07846041055718475,
     y: 0.07331932773109244,
@@ -80,6 +93,12 @@ export const MONSTER_CARD_CONFIG: AnimeCardConfig = {
 
 // Spell card configuration (no stars, no ATK/DEF)
 export const SPELL_CARD_CONFIG: AnimeCardConfig = {
+  layout: {
+    x: 0,
+    y: 0,
+    w: 1,
+    h: 1,
+  },
   artwork: {
     x: 0.07846041055718475,
     y: 0.07331932773109244,
@@ -114,6 +133,12 @@ export const SPELL_CARD_CONFIG: AnimeCardConfig = {
 
 // Trap card configuration (no stars, no ATK/DEF)
 export const TRAP_CARD_CONFIG: AnimeCardConfig = {
+  layout: {
+    x: 0,
+    y: 0,
+    w: 1,
+    h: 1,
+  },
   artwork: {
     x: 0.07846041055718475,
     y: 0.07331932773109244,

@@ -222,11 +222,15 @@ export class AnimeCardGeneratorService {
       ctx.fillRect(artX, artY, artW, artH);
     }
 
-    // === STEP 2: Draw layout frame on top (100% size) ===
+    // === STEP 2: Draw layout frame on top (configurable position/size) ===
     try {
       const layoutUrl = this.getLayoutAssetUrl(card);
       const layoutImg = await this.preloadImage(layoutUrl);
-      ctx.drawImage(layoutImg, 0, 0, W, H);
+      const layoutX = W * cfg.layout.x;
+      const layoutY = H * cfg.layout.y;
+      const layoutW = W * cfg.layout.w;
+      const layoutH = H * cfg.layout.h;
+      ctx.drawImage(layoutImg, layoutX, layoutY, layoutW, layoutH);
     } catch (e) {
       console.error('Failed to load layout:', e);
     }
