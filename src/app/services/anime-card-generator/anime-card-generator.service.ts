@@ -126,19 +126,48 @@ export class AnimeCardGeneratorService {
 
   private getLayoutAssetUrl(card: Card): string {
     const type = card.type?.toLowerCase() || '';
+    const name = card.name?.toLowerCase() || '';
+    
+    // Check for Egyptian God Cards and Sacred Beasts
+    if (name.includes('slifer') || name.includes('uria')) {
+      return 'assets/Layout/layout-slifer-uria.png';
+    }
+    if (name.includes('obelisk') || name.includes('raviel')) {
+      return 'assets/Layout/layout-obelisk-raviel.png';
+    }
+    if (name.includes('winged dragon of ra') || name.includes('hamon')) {
+      return 'assets/Layout/layout-ra-hamon.png';
+    }
+    
+    // Check for Legendary Dragons
+    if (name.includes('legendary dragon') || name.includes('timaeus') || 
+        name.includes('critias') || name.includes('hermos')) {
+      return 'assets/Layout/layout-legendary-dragon.png';
+    }
     
     // Check card type and return appropriate layout
+    if (type.includes('token')) {
+      return 'assets/Layout/layout-monster-token.png';
+    }
     if (type.includes('fusion')) {
       return 'assets/Layout/layout-monster-fusion.png';
     }
+    if (type.includes('synchro')) {
+      return 'assets/Layout/layout-monster-synchro.png';
+    }
+    if (type.includes('xyz')) {
+      return 'assets/Layout/layout-monster-xyz.png';
+    }
+    if (type.includes('ritual')) {
+      return 'assets/Layout/layout-ritual.png';
+    }
     if (type.includes('trap')) {
-      return 'assets/Layout/layout-monster-trap.png';
+      return 'assets/Layout/layout-trap.png';
     }
     if (type.includes('spell') || type.includes('magic')) {
-      return 'assets/Layout/layout-monster-spell.png';
+      return 'assets/Layout/layout-spell.png';
     }
-    if (type.includes('effect') || type.includes('synchro') || type.includes('xyz') || 
-        type.includes('link') || type.includes('ritual') || type.includes('pendulum')) {
+    if (type.includes('effect') || type.includes('link') || type.includes('pendulum')) {
       return 'assets/Layout/layout-monster-effect.png';
     }
     if (type.includes('monster')) {
@@ -146,7 +175,7 @@ export class AnimeCardGeneratorService {
     }
     
     // Default to spell layout
-    return 'assets/Layout/layout-monster-spell.png';
+    return 'assets/Layout/layout-spell.png';
   }
 
   async preloadImage(url: string): Promise<HTMLImageElement> {
